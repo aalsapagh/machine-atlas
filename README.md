@@ -1,5 +1,7 @@
 # Industrial Machine Atlas
 
+**Live demo: [machine-atlas.vercel.app](https://machine-atlas.vercel.app)**
+
 An interactive 3D industrial machine explorer — inspect a centrifugal pump assembly (P-101) in 3D, drill into any component's function, maintenance history, failure modes, and spare parts.
 
 ## Stack
