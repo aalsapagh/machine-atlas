@@ -13,12 +13,19 @@ import { useMachineStore } from "./store/machineStore";
 
 function App() {
   const selectedComponentId = useMachineStore((s) => s.selectedComponentId);
+  const language = useMachineStore((s) => s.language);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [mobileDetailsOpen, setMobileDetailsOpen] = useState(false);
 
   useEffect(() => {
     if (selectedComponentId) setMobileDetailsOpen(true);
   }, [selectedComponentId]);
+
+  // Apply RTL direction and font to the root element
+  useEffect(() => {
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = language;
+  }, [language]);
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-industrial-bg text-industrial-text">

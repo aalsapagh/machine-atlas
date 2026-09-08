@@ -1,11 +1,12 @@
 import { Html } from "@react-three/drei";
 import { useMachineStore } from "../../store/machineStore";
-import { getComponentById } from "../../data/machineData";
+import { getComponentFromMachine } from "../../data/machineRegistry";
 
 export function HoverTooltip() {
   const hoveredComponentId = useMachineStore((s) => s.hoveredComponentId);
   const selectedComponentId = useMachineStore((s) => s.selectedComponentId);
-  const component = getComponentById(hoveredComponentId);
+  const selectedMachineId = useMachineStore((s) => s.selectedMachineId);
+  const component = getComponentFromMachine(selectedMachineId, hoveredComponentId);
 
   if (!component || hoveredComponentId === selectedComponentId) return null;
 

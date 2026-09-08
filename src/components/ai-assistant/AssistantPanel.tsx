@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { Sparkles, X, Send } from "lucide-react";
 import { useMachineStore } from "../../store/machineStore";
-import { getComponentById } from "../../data/machineData";
+import { getComponentFromMachine } from "../../data/machineRegistry";
 import { answerQuestion, SUGGESTED_QUESTIONS, type AssistantMessage } from "../../features/ai-assistant/assistantEngine";
+import { useTranslation } from "../../i18n/useTranslation";
 
 export function AssistantPanel() {
   const assistantOpen = useMachineStore((s) => s.assistantOpen);
   const toggleAssistant = useMachineStore((s) => s.toggleAssistant);
   const selectedComponentId = useMachineStore((s) => s.selectedComponentId);
-  const component = getComponentById(selectedComponentId);
+  const selectedMachineId = useMachineStore((s) => s.selectedMachineId);
+  const { t } = useTranslation();
+  const component = getComponentFromMachine(selectedMachineId, selectedComponentId);
 
   const [messages, setMessages] = useState<AssistantMessage[]>([]);
   const [input, setInput] = useState("");
@@ -26,7 +29,7 @@ export function AssistantPanel() {
           role: "assistant",
           text: component
             ? `You're inspecting ${component.name}. Ask me anything about it — try one of the suggestions below.`
-            : "Select a component to start, or ask a general question about the machine.",
+            : t("selectComponentPrompt"),
         },
       ]);
     }
@@ -48,7 +51,7 @@ export function AssistantPanel() {
       <div className="flex items-center justify-between border-b border-industrial-border px-3 py-2.5">
         <div className="flex items-center gap-1.5 text-sm font-medium text-industrial-text">
           <Sparkles size={14} className="text-industrial-accent" />
-          AI Assistant
+          {t("aiAssistant")}
         </div>
         <button onClick={toggleAssistant} aria-label="Close assistant" className="rounded p-1 text-industrial-muted hover:bg-industrial-panel-alt hover:text-industrial-text">
           <X size={14} />
@@ -94,8 +97,8 @@ export function AssistantPanel() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about this component..."
-          aria-label="Ask the assistant"
+          placeholder={t("askAboutComponent")}
+          aria-label={t("askAboutComponent")}
           className="flex-1 rounded-md border border-industrial-border bg-industrial-panel-alt px-2.5 py-1.5 text-xs text-industrial-text placeholder:text-industrial-muted focus:border-industrial-accent focus:outline-none"
         />
         <button

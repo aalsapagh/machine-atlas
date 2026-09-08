@@ -1,18 +1,23 @@
 import { useMemo } from "react";
 import { useMachineStore } from "../../store/machineStore";
-import { machineComponents } from "../../data/machineData";
+import { getActiveMachineComponents } from "../../data/machineRegistry";
 import { searchComponents } from "../../utils/machineHelpers";
+import { useTranslation } from "../../i18n/useTranslation";
 
 export function SearchResults() {
   const searchQuery = useMachineStore((s) => s.searchQuery);
   const selectComponent = useMachineStore((s) => s.selectComponent);
   const setSearchQuery = useMachineStore((s) => s.setSearchQuery);
-  const hits = useMemo(() => searchComponents(machineComponents, searchQuery).slice(0, 8), [searchQuery]);
+  const selectedMachineId = useMachineStore((s) => s.selectedMachineId);
+  const { t } = useTranslation();
+
+  const components = getActiveMachineComponents(selectedMachineId);
+  const hits = useMemo(() => searchComponents(components, searchQuery).slice(0, 8), [components, searchQuery]);
 
   if (hits.length === 0) {
     return (
       <div className="absolute left-0 right-0 top-full mt-1 rounded-md border border-industrial-border bg-industrial-panel p-3 text-xs text-industrial-muted shadow-xl">
-        No components match "{searchQuery}"
+        {t("noMatch")} "{searchQuery}"
       </div>
     );
   }

@@ -5,7 +5,20 @@ export type ComponentCategory =
   | "Electrical"
   | "Instrumentation"
   | "Piping"
-  | "Foundation";
+  | "Foundation"
+  | "Drivetrain"
+  | "Braking"
+  | "Suspension"
+  | "Body"
+  | "Fuel System";
+
+export type MachineModelType = 'pump' | 'motorcycle' | 'car' | 'tricycle' | 'truck' | 'compressor' | 'generator' | 'conveyor' | 'generic';
+
+export interface MachineDefinition {
+  info: MachineInfo;
+  components: MachineComponent[];
+  modelType: MachineModelType;
+}
 
 export interface FailureMode {
   name: string;
@@ -63,3 +76,5 @@ export interface MachineInfo {
 export type CameraView = "default" | "front" | "side" | "top";
 
 export type ActivePanel = "overview" | "maintenance" | "failure-modes" | "spare-parts";
+
+export type Language = "en" | "ar";

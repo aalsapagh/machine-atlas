@@ -1,13 +1,20 @@
 import { useMemo } from "react";
 import { X, Activity, AlertCircle, Wrench, CalendarClock } from "lucide-react";
-import { machineComponents, machineInfo } from "../../data/machineData";
 import { useMachineStore } from "../../store/machineStore";
+import { getMachineById } from "../../data/machineRegistry";
 import { daysUntil, formatDate, overallHealthFromComponents } from "../../utils/machineHelpers";
+import { useTranslation } from "../../i18n/useTranslation";
 
 export function DashboardPanel() {
   const dashboardOpen = useMachineStore((s) => s.dashboardOpen);
   const toggleDashboard = useMachineStore((s) => s.toggleDashboard);
   const selectComponent = useMachineStore((s) => s.selectComponent);
+  const selectedMachineId = useMachineStore((s) => s.selectedMachineId);
+  const { t } = useTranslation();
+
+  const machine = getMachineById(selectedMachineId);
+  const machineInfo = machine?.info;
+  const machineComponents = machine?.components ?? [];
 
   const stats = useMemo(() => {
     const health = overallHealthFromComponents(machineComponents);
@@ -21,16 +28,18 @@ export function DashboardPanel() {
       .map((c) => ({ id: c.id, name: c.name, date: c.nextMaintenanceDate }))
       .sort((a, b) => a.date.localeCompare(b.date))[0];
     return { health, warnings, dueSoon, lastMaintenance, nextMaintenance };
-  }, []);
+  }, [machineComponents]);
 
-  if (!dashboardOpen) return null;
+  if (!dashboardOpen || !machineInfo) return null;
 
   return (
     <div className="pointer-events-auto absolute bottom-4 left-4 z-20 w-72 rounded-lg border border-industrial-border bg-industrial-panel/95 p-3.5 shadow-2xl backdrop-blur-sm">
       <div className="flex items-start justify-between">
         <div>
           <div className="text-xs font-semibold text-industrial-muted">{machineInfo.tag}</div>
-          <div className="text-sm font-medium text-industrial-text">{machineInfo.status}</div>
+          <div className="text-sm font-medium text-industrial-text">
+            {t(machineInfo.status === "Operational" ? "operational" : machineInfo.status === "Degraded" ? "degraded" : "shutdown")}
+          </div>
         </div>
         <button onClick={toggleDashboard} aria-label="Close dashboard" className="rounded p-1 text-industrial-muted hover:bg-industrial-panel-alt hover:text-industrial-text">
           <X size={14} />
@@ -55,28 +64,31 @@ export function DashboardPanel() {
           <span className="absolute text-sm font-semibold text-industrial-text">{stats.health}%</span>
         </div>
         <div>
-          <div className="text-[11px] uppercase tracking-wide text-industrial-muted">Overall Health</div>
-          <div className="text-xs text-industrial-muted">Weighted across {machineComponents.length} components</div>
+          <div className="text-[11px] uppercase tracking-wide text-industrial-muted">{t("overallHealth")}</div>
+          <div className="text-xs text-industrial-muted">
+            {t("components_count").replace("components", `${machineComponents.length} ${t("components_count")}`)}
+            Across {machineComponents.length} {t("components_count")}
+          </div>
         </div>
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
         <MetricCard
           icon={<Wrench size={13} />}
-          label="Maintenance Due"
-          value={`${stats.dueSoon.length} Components`}
+          label={t("maintenanceDue")}
+          value={`${stats.dueSoon.length} ${t("components_count")}`}
           tone={stats.dueSoon.length > 0 ? "warning" : "default"}
         />
         <MetricCard
           icon={<AlertCircle size={13} />}
-          label="Active Warnings"
+          label={t("activeWarnings")}
           value={String(stats.warnings.length)}
           tone={stats.warnings.length > 0 ? "critical" : "default"}
         />
-        <MetricCard icon={<Activity size={13} />} label="Last Maintenance" value={stats.lastMaintenance ? formatDate(stats.lastMaintenance) : "—"} />
+        <MetricCard icon={<Activity size={13} />} label={t("lastMaintenance")} value={stats.lastMaintenance ? formatDate(stats.lastMaintenance) : "—"} />
         <MetricCard
           icon={<CalendarClock size={13} />}
-          label="Next Maintenance"
+          label={t("nextMaintenance")}
           value={stats.nextMaintenance ? formatDate(stats.nextMaintenance.date) : "—"}
           onClick={() => stats.nextMaintenance && selectComponent(stats.nextMaintenance.id)}
         />

@@ -1,30 +1,33 @@
 import { X, MapPin, Wrench } from "lucide-react";
 import { useMachineStore } from "../../store/machineStore";
-import { getComponentById } from "../../data/machineData";
+import { getComponentFromMachine } from "../../data/machineRegistry";
 import { statusColor, statusLabel } from "../../utils/machineHelpers";
 import { OverviewTab } from "./OverviewTab";
 import { MaintenanceTab } from "./MaintenanceTab";
 import { FailureModesTab } from "./FailureModesTab";
 import { SparePartsTab } from "./SparePartsTab";
+import { useTranslation } from "../../i18n/useTranslation";
 import type { ActivePanel } from "../../types/machine";
-
-const TABS: { id: ActivePanel; label: string }[] = [
-  { id: "overview", label: "Overview" },
-  { id: "maintenance", label: "Maintenance" },
-  { id: "failure-modes", label: "Failure Modes" },
-  { id: "spare-parts", label: "Spare Parts" },
-];
 
 export function DetailsPanel({ onClose }: { onClose?: () => void }) {
   const selectedComponentId = useMachineStore((s) => s.selectedComponentId);
+  const selectedMachineId = useMachineStore((s) => s.selectedMachineId);
   const selectComponent = useMachineStore((s) => s.selectComponent);
   const isolateComponent = useMachineStore((s) => s.isolateComponent);
   const isolatedComponentId = useMachineStore((s) => s.isolatedComponentId);
   const exitIsolation = useMachineStore((s) => s.exitIsolation);
   const activePanel = useMachineStore((s) => s.activePanel);
   const setActivePanel = useMachineStore((s) => s.setActivePanel);
+  const { t } = useTranslation();
 
-  const component = getComponentById(selectedComponentId);
+  const component = getComponentFromMachine(selectedMachineId, selectedComponentId);
+
+  const TABS: { id: ActivePanel; label: string }[] = [
+    { id: "overview", label: t("overview") },
+    { id: "maintenance", label: t("maintenance") },
+    { id: "failure-modes", label: t("failureModes") },
+    { id: "spare-parts", label: t("spareParts") },
+  ];
 
   if (!component) {
     return (
@@ -100,7 +103,7 @@ export function DetailsPanel({ onClose }: { onClose?: () => void }) {
             onClick={exitIsolation}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-industrial-accent/60 bg-industrial-accent/15 py-1.5 text-xs font-medium text-industrial-accent"
           >
-            Exit Isolation
+            {t("exitIsolation")}
           </button>
         ) : (
           <button
@@ -115,7 +118,7 @@ export function DetailsPanel({ onClose }: { onClose?: () => void }) {
           className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-industrial-border bg-industrial-panel-alt py-1.5 text-xs font-medium text-industrial-text hover:border-industrial-accent/50"
         >
           <Wrench size={13} />
-          Maintenance
+          {t("maintenance")}
         </button>
       </div>
     </aside>

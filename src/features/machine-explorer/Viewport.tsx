@@ -3,13 +3,18 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, ContactShadows, GizmoHelper, GizmoViewport } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { PumpAssembly } from "../../components/machine/PumpAssembly";
+import { GenericMachineAssembly } from "../../components/machine/GenericMachineAssembly";
 import { CameraRig } from "../../components/machine/CameraRig";
 import { HoverTooltip } from "../../components/machine/HoverTooltip";
 import { useMachineStore } from "../../store/machineStore";
+import { getMachineById } from "../../data/machineRegistry";
 
 export function Viewport() {
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
   const selectComponent = useMachineStore((s) => s.selectComponent);
+  const selectedMachineId = useMachineStore((s) => s.selectedMachineId);
+  const machine = getMachineById(selectedMachineId);
+  const modelType = machine?.modelType ?? "generic";
 
   return (
     <div className="relative h-full w-full bg-industrial-bg">
@@ -35,7 +40,11 @@ export function Viewport() {
         />
         <directionalLight position={[-5, 4, -4]} intensity={0.3} />
         <Suspense fallback={null}>
-          <PumpAssembly />
+          {modelType === "pump" ? (
+            <PumpAssembly />
+          ) : (
+            <GenericMachineAssembly machineId={selectedMachineId} />
+          )}
           <HoverTooltip />
           <ContactShadows position={[0, -1.35, 0]} opacity={0.55} scale={14} blur={2.2} far={4} />
         </Suspense>
