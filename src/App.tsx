@@ -5,7 +5,6 @@ import { LayersPanel } from "./components/navigation/LayersPanel";
 import { Sidebar } from "./components/layout/Sidebar";
 import { DetailsPanel } from "./components/component-panel/DetailsPanel";
 import { Viewport } from "./features/machine-explorer/Viewport";
-import { ViewControls } from "./components/machine/ViewControls";
 import { useMachineStore } from "./store/machineStore";
 
 function App() {
@@ -46,7 +45,6 @@ function App() {
         <main className="relative min-w-0 flex-1">
           <Viewport />
           <LayersPanel />
-          <ViewControls />
         </main>
 
         <div className="hidden lg:flex">
