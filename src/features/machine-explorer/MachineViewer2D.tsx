@@ -611,6 +611,295 @@ function ShapeConveyor({ w, h }: { w: number; h: number }) {
   );
 }
 
+// ─── Car-specific shapes ─────────────────────────────────────────────────────
+
+function ShapeCarEngine({ w, h }: { w: number; h: number }) {
+  const hw = w / 2, hh = h / 2;
+  const blockH = h * 0.5, blockY = hh - blockH;
+  const headH = h * 0.2, headY = blockY - headH;
+  const vcH = h * 0.12, vcY = headY - vcH;
+  const oilPanH = h * 0.18;
+  const cylCount = 4, cylW = (w * 0.7) / cylCount;
+  const cylStartX = -w * 0.35;
+  return (
+    <g>
+      {/* Oil pan */}
+      <rect x={-hw * 0.8} y={hh - oilPanH} width={w * 0.8} height={oilPanH} rx={3} fill="url(#g-dark)" />
+      {/* Engine block */}
+      <rect x={-hw} y={blockY} width={w} height={blockH} rx={4} fill="url(#g-motor)" />
+      {/* Cylinder bores */}
+      {Array.from({ length: cylCount }, (_, i) => (
+        <rect key={i} x={cylStartX + i * (cylW + 2)} y={blockY + 6} width={cylW - 2} height={blockH - 12} rx={2} fill="#1a2230" opacity={0.7} />
+      ))}
+      {/* Cylinder head */}
+      <rect x={-hw + 6} y={headY} width={w - 12} height={headH} rx={3} fill="url(#g-steel)" />
+      {/* Valve cover */}
+      <rect x={-hw + 12} y={vcY} width={w - 24} height={vcH} rx={3} fill="url(#g-dark)" />
+      {/* Oil filler cap */}
+      <circle cx={hw * 0.5} cy={vcY + vcH * 0.5} r={6} fill="#3a4048" stroke="#6b7580" strokeWidth={1.5} />
+      {/* Timing cover on left */}
+      <rect x={-hw} y={headY} width={14} height={blockH + headH} rx={2} fill="url(#g-casing)" />
+      {/* Accessory pulley */}
+      <circle cx={-hw - 2} cy={blockY + blockH * 0.4} r={9} fill="url(#g-dark)" stroke="#6b7580" strokeWidth={1.5} />
+    </g>
+  );
+}
+
+function ShapeCarTransmission({ w, h }: { w: number; h: number }) {
+  const hw = w / 2;
+  const bellW = w * 0.42, bodyW = w * 0.58;
+  const bellH = h * 0.78;
+  const bodyH = h * 0.6;
+  return (
+    <g>
+      {/* Main body (tapers toward right) */}
+      <polygon
+        points={`${-hw},${-bodyH/2} ${-hw + bodyW},${-bodyH * 0.35} ${-hw + bodyW},${bodyH * 0.35} ${-hw},${bodyH/2}`}
+        fill="url(#g-motor)"
+      />
+      {/* Bell housing (left, circular-ish) */}
+      <ellipse cx={hw - bellW * 0.5} cy={0} rx={bellW * 0.38} ry={bellH / 2} fill="url(#g-steel)" />
+      <ellipse cx={hw - bellW * 0.5} cy={0} rx={bellW * 0.22} ry={bellH * 0.28} fill="url(#g-dark)" />
+      {/* Output shaft stub */}
+      <rect x={-hw - 10} y={-5} width={14} height={10} rx={2} fill="#6b7580" />
+      {/* Ribbing lines */}
+      {Array.from({ length: 3 }, (_, i) => (
+        <line key={i} x1={-hw + 10 + i * (bodyW * 0.3)} y1={-bodyH * 0.4} x2={-hw + 10 + i * (bodyW * 0.3)} y2={bodyH * 0.4} stroke="#3a4048" strokeWidth={1.5} />
+      ))}
+    </g>
+  );
+}
+
+function ShapeCarWheel({ w, h }: { w: number; h: number }) {
+  const r = Math.min(w, h) * 0.46;
+  const tireW = r * 0.22;
+  const rimR = r - tireW;
+  const hubR = rimR * 0.22;
+  const spokeCount = 5;
+  return (
+    <g>
+      {/* Tire */}
+      <circle cx={0} cy={0} r={r} fill="#1a1e24" />
+      <circle cx={0} cy={0} r={r - 2} fill="none" stroke="#2a3040" strokeWidth={tireW * 1.5} />
+      {/* Rim */}
+      <circle cx={0} cy={0} r={rimR} fill="url(#g-steel)" />
+      {/* Spokes */}
+      {Array.from({ length: spokeCount }, (_, i) => {
+        const a = (i * Math.PI * 2) / spokeCount - Math.PI / 2;
+        const spokeInner = hubR * 1.4;
+        const spokeOuter = rimR * 0.88;
+        const bw = rimR * 0.14;
+        const mx = Math.cos(a), my = Math.sin(a);
+        const px = -my * bw, py = mx * bw;
+        return (
+          <polygon key={i}
+            points={`${mx * spokeInner + px * 0.7},${my * spokeInner + py * 0.7} ${mx * spokeOuter + px * 0.3},${my * spokeOuter + py * 0.3} ${mx * spokeOuter - px * 0.3},${my * spokeOuter - py * 0.3} ${mx * spokeInner - px * 0.7},${my * spokeInner - py * 0.7}`}
+            fill="url(#g-dark)"
+          />
+        );
+      })}
+      {/* Hub */}
+      <circle cx={0} cy={0} r={hubR * 1.1} fill="url(#g-casing)" stroke="#8a90a0" strokeWidth={1.5} />
+      <circle cx={0} cy={0} r={hubR * 0.5} fill="#1a2230" />
+    </g>
+  );
+}
+
+function ShapeCarBrakes({ w, h }: { w: number; h: number }) {
+  const r = Math.min(w, h) * 0.44;
+  const innerR = r * 0.42;
+  const hubR = r * 0.14;
+  const slotCount = 8;
+  // Caliper
+  const calW = r * 0.7, calH = r * 0.55;
+  return (
+    <g>
+      {/* Disc rotor */}
+      <circle cx={0} cy={0} r={r} fill="#3a3a42" />
+      {/* Vented slots */}
+      {Array.from({ length: slotCount }, (_, i) => {
+        const a = (i * Math.PI * 2) / slotCount;
+        const x1 = Math.cos(a) * (innerR + 4), y1 = Math.sin(a) * (innerR + 4);
+        const x2 = Math.cos(a) * (r - 4), y2 = Math.sin(a) * (r - 4);
+        return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#5a5a65" strokeWidth={3} />;
+      })}
+      <circle cx={0} cy={0} r={innerR} fill="#2a2a32" />
+      {/* Hat / hub area */}
+      <circle cx={0} cy={0} r={hubR * 1.5} fill="url(#g-steel)" />
+      <circle cx={0} cy={0} r={hubR} fill="#1a2230" />
+      {/* Caliper body (top-right) */}
+      <rect x={r * 0.3} y={-calH / 2} width={calW} height={calH} rx={5} fill="url(#g-motor)" />
+      {/* Caliper bridge */}
+      <rect x={r * 0.3 + 4} y={-calH / 2 + 5} width={calW - 8} height={calH * 0.35} rx={2} fill="#3a4050" />
+      <rect x={r * 0.3 + 4} y={calH / 2 - calH * 0.35 - 5} width={calW - 8} height={calH * 0.35} rx={2} fill="#3a4050" />
+    </g>
+  );
+}
+
+function ShapeCarRadiator({ w, h }: { w: number; h: number }) {
+  const hw = w / 2, hh = h / 2;
+  const tankW = w * 0.1;
+  const coreW = w - tankW * 2;
+  const finCount = Math.floor(coreW / 7);
+  const tubeCount = 5;
+  return (
+    <g>
+      {/* Left tank */}
+      <rect x={-hw} y={-hh} width={tankW} height={h} rx={3} fill="url(#g-steel)" />
+      {/* Right tank */}
+      <rect x={hw - tankW} y={-hh} width={tankW} height={h} rx={3} fill="url(#g-steel)" />
+      {/* Core background */}
+      <rect x={-hw + tankW} y={-hh} width={coreW} height={h} fill="#1e252e" />
+      {/* Horizontal tubes */}
+      {Array.from({ length: tubeCount }, (_, i) => {
+        const ty = -hh + (h / (tubeCount + 1)) * (i + 1);
+        return <rect key={i} x={-hw + tankW} y={ty - 4} width={coreW} height={8} rx={1} fill="#3a5060" />;
+      })}
+      {/* Vertical fins */}
+      {Array.from({ length: finCount }, (_, i) => {
+        const fx = -hw + tankW + (i + 0.5) * (coreW / finCount);
+        return <line key={i} x1={fx} y1={-hh + 4} x2={fx} y2={hh - 4} stroke="#2a3a48" strokeWidth={1} />;
+      })}
+      {/* Hose connections */}
+      <rect x={-hw - 8} y={-hh + 6} width={10} height={12} rx={2} fill="#4a5568" />
+      <rect x={-hw - 8} y={hh - 18} width={10} height={12} rx={2} fill="#4a5568" />
+    </g>
+  );
+}
+
+function ShapeCarFuelTank({ w, h }: { w: number; h: number }) {
+  const hw = w / 2, hh = h / 2;
+  return (
+    <g>
+      {/* Saddle-shaped tank body */}
+      <rect x={-hw} y={-hh + 12} width={w} height={h - 24} rx={10} fill="url(#g-dark)" />
+      {/* Saddle dip (center top) */}
+      <rect x={-hw * 0.3} y={-hh + 10} width={hw * 0.6} height={18} rx={4} fill="#1a2028" />
+      {/* Fuel pump module */}
+      <rect x={-10} y={-hh + 4} width={20} height={22} rx={3} fill="url(#g-steel)" />
+      <circle cx={0} cy={-hh + 8} r={5} fill="#2a3040" stroke="#6b7580" strokeWidth={1} />
+      {/* Filler neck stub */}
+      <rect x={hw - 18} y={-hh - 4} width={16} height={16} rx={3} fill="#4a5568" />
+      {/* Level indicator line */}
+      <line x1={-hw + 14} y1={0} x2={hw - 14} y2={0} stroke="#3a5060" strokeWidth={1.5} strokeDasharray="6 4" />
+      {/* Straps */}
+      <rect x={-hw * 0.6} y={hh - 10} width={w * 0.6} height={6} rx={2} fill="#3a4048" />
+    </g>
+  );
+}
+
+function ShapeCarBattery({ w, h }: { w: number; h: number }) {
+  const hw = w / 2, hh = h / 2;
+  const cellW = (w - 20) / 6;
+  return (
+    <g>
+      {/* Main case */}
+      <rect x={-hw} y={-hh + 10} width={w} height={h - 10} rx={5} fill="url(#g-dark)" />
+      {/* Top cover */}
+      <rect x={-hw + 4} y={-hh + 5} width={w - 8} height={14} rx={3} fill="#2a3240" />
+      {/* Cell vents */}
+      {Array.from({ length: 6 }, (_, i) => (
+        <rect key={i} x={-hw + 10 + i * (cellW + 2)} y={-hh + 8} width={cellW} height={8} rx={2} fill="#1a2030" />
+      ))}
+      {/* Positive terminal */}
+      <rect x={-hw + 12} y={-hh - 2} width={16} height={12} rx={2} fill="#ef4444" />
+      <rect x={-hw + 17} y={-hh - 8} width={6} height={10} rx={1} fill="#ef4444" />
+      {/* Negative terminal */}
+      <rect x={hw - 28} y={-hh - 2} width={16} height={12} rx={2} fill="#6b7580" />
+      <rect x={hw - 23} y={-hh - 8} width={6} height={10} rx={1} fill="#6b7580" />
+      {/* Label */}
+      <rect x={-hw * 0.5} y={-hh * 0.1} width={w * 0.5} height={hh * 0.7} rx={3} fill="#1e3050" />
+      <text x={0} y={hh * 0.3} textAnchor="middle" fontSize={12} fill="#93c5fd" fontWeight="bold">12V</text>
+    </g>
+  );
+}
+
+function ShapeCarSuspension({ w, h }: { w: number; h: number }) {
+  const hw = w / 2, hh = h / 2;
+  const damperW = w * 0.22;
+  const damperX = -damperW / 2;
+  const springCoils = 6;
+  const springTop = -hh + h * 0.08;
+  const springBot = hh - h * 0.38;
+  const springH = springBot - springTop;
+  const coilStep = springH / springCoils;
+  const coilAmp = w * 0.24;
+  return (
+    <g>
+      {/* Upper mount plate */}
+      <rect x={-hw * 0.5} y={-hh} width={w * 0.5} height={8} rx={2} fill="url(#g-steel)" />
+      {/* Spring coils */}
+      {Array.from({ length: springCoils }, (_, i) => {
+        const y0 = springTop + i * coilStep;
+        const y1 = y0 + coilStep;
+        const left = i % 2 === 0;
+        return (
+          <path key={i}
+            d={`M ${left ? -coilAmp : coilAmp} ${y0} Q ${left ? coilAmp : -coilAmp} ${(y0 + y1) / 2} ${left ? -coilAmp : coilAmp} ${y1}`}
+            fill="none" stroke="url(#g-steel)" strokeWidth={5} strokeLinecap="round" />
+        );
+      })}
+      {/* Damper body */}
+      <rect x={damperX} y={springBot} width={damperW} height={h * 0.28} rx={3} fill="url(#g-motor)" />
+      {/* Damper rod */}
+      <rect x={damperX + damperW * 0.3} y={springBot - h * 0.12} width={damperW * 0.4} height={h * 0.16} rx={2} fill="url(#g-steel)" />
+      {/* Lower control arm */}
+      <path d={`M ${-hw} ${hh} L ${hw * 0.1} ${springBot + h * 0.28}`} stroke="url(#g-dark)" strokeWidth={8} strokeLinecap="round" fill="none" />
+      {/* Lower mount */}
+      <circle cx={-hw} cy={hh} r={7} fill="url(#g-steel)" />
+      <circle cx={-hw} cy={hh} r={3} fill="#1a2230" />
+    </g>
+  );
+}
+
+function ShapeCarBody({ w, h }: { w: number; h: number }) {
+  const hw = w / 2, hh = h / 2;
+  // Sedan silhouette side view
+  const floorY = hh * 0.55;
+  const roofY = -hh * 0.65;
+  const hoodX = hw * 0.55;
+  const trunkX = -hw * 0.55;
+  const wheelRad = h * 0.22;
+  return (
+    <g>
+      {/* Car body outline */}
+      <path
+        d={`
+          M ${-hw} ${floorY}
+          L ${-hw} ${floorY - h * 0.12}
+          Q ${trunkX} ${floorY - h * 0.28} ${trunkX * 0.3} ${roofY}
+          Q ${0} ${roofY - h * 0.12} ${hoodX * 0.35} ${roofY}
+          Q ${hoodX} ${floorY - h * 0.25} ${hw} ${floorY - h * 0.12}
+          L ${hw} ${floorY}
+          Z
+        `}
+        fill="url(#g-casing)"
+        stroke="#5a6270"
+        strokeWidth={1.5}
+      />
+      {/* Windshield */}
+      <path
+        d={`M ${hoodX * 0.35} ${roofY + 2} Q ${hoodX * 0.55} ${roofY - h * 0.08} ${hoodX * 0.7} ${roofY + h * 0.18}`}
+        fill="#1e3a5a" stroke="#3a5a7a" strokeWidth={1}
+      />
+      {/* Rear window */}
+      <path
+        d={`M ${trunkX * 0.3} ${roofY + 2} Q ${trunkX * 0.55} ${roofY - h * 0.06} ${trunkX * 0.7} ${roofY + h * 0.18}`}
+        fill="#1e3a5a" stroke="#3a5a7a" strokeWidth={1}
+      />
+      {/* Side window */}
+      <rect x={trunkX * 0.65} y={roofY + 2} width={(hoodX - trunkX) * 0.28} height={h * 0.16} rx={2} fill="#1e3a5a" stroke="#3a5a7a" strokeWidth={1} />
+      {/* Wheels */}
+      <circle cx={-hw * 0.55} cy={floorY + wheelRad * 0.5} r={wheelRad} fill="#1a1e24" />
+      <circle cx={-hw * 0.55} cy={floorY + wheelRad * 0.5} r={wheelRad * 0.62} fill="#3a4050" />
+      <circle cx={ hw * 0.55} cy={floorY + wheelRad * 0.5} r={wheelRad} fill="#1a1e24" />
+      <circle cx={ hw * 0.55} cy={floorY + wheelRad * 0.5} r={wheelRad * 0.62} fill="#3a4050" />
+      {/* Door line */}
+      <line x1={0} y1={roofY + 4} x2={0} y2={floorY - 4} stroke="#3a4048" strokeWidth={1.5} />
+    </g>
+  );
+}
+
 const CATEGORY_COLORS: Record<string, string> = {
   Electrical:       "#3b6ab0",
   Mechanical:       "#5a6270",
@@ -655,6 +944,19 @@ function resolveShape(id: string, category: string, w: number, h: number): React
     case "inlet-pipe":         return <ShapePipe w={w} h={h} vertical />;
     case "pressure-gauge":     return <ShapePressureGauge w={w} h={h} />;
     case "temperature-sensor": return <ShapeTemperatureSensor w={w} h={h} />;
+    // Car-specific
+    case "car-engine":         return <ShapeCarEngine w={w} h={h} />;
+    case "car-transmission":   return <ShapeCarTransmission w={w} h={h} />;
+    case "car-fl-wheel":
+    case "car-fr-wheel":
+    case "car-rl-wheel":
+    case "car-rr-wheel":       return <ShapeCarWheel w={w} h={h} />;
+    case "car-brakes":         return <ShapeCarBrakes w={w} h={h} />;
+    case "car-fuel-tank":      return <ShapeCarFuelTank w={w} h={h} />;
+    case "car-battery":        return <ShapeCarBattery w={w} h={h} />;
+    case "car-radiator":       return <ShapeCarRadiator w={w} h={h} />;
+    case "car-suspension":     return <ShapeCarSuspension w={w} h={h} />;
+    case "car-body":           return <ShapeCarBody w={w} h={h} />;
   }
 
   // Generic by ID hints

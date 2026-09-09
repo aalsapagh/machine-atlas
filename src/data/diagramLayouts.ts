@@ -30,6 +30,25 @@ const P101_POSITIONS: Record<string, ComponentPos> = {
   "temperature-sensor": { x: 200,  y: 72,   w: 24,  h: 90,  ex: 105,  ey: 5   },
 };
 
+// Car-801 (Toyota Camry) layout — logical arrangement of major components
+// Coordinate origin is center. Positive y is downward in SVG space.
+// Layout: body across top, drivetrain left-to-right in middle, wheels at corners, accessories bottom
+const CAR801_POSITIONS: Record<string, ComponentPos> = {
+  //                              x     y     w    h    ex    ey
+  "car-body":         { x: -10,  y: -200, w: 340, h: 110, ex:  0,   ey: -130 },
+  "car-engine":       { x: -240, y: -50,  w: 200, h: 140, ex: -190, ey: -40  },
+  "car-transmission": { x:  -10, y: -50,  w: 180, h: 130, ex:   0,  ey: -40  },
+  "car-radiator":     { x: -240, y: -210, w: 150, h: 100, ex: -190, ey: -150 },
+  "car-fl-wheel":     { x: -330, y:  80,  w: 110, h: 110, ex: -270, ey:  110 },
+  "car-fr-wheel":     { x:  220, y:  80,  w: 110, h: 110, ex:  270, ey:  110 },
+  "car-rl-wheel":     { x: -330, y:  220, w: 110, h: 110, ex: -270, ey:  240 },
+  "car-rr-wheel":     { x:  220, y:  220, w: 110, h: 110, ex:  270, ey:  240 },
+  "car-brakes":       { x:   60, y:  80,  w: 140, h: 130, ex:  80,  ey:  110 },
+  "car-suspension":   { x:  -130,y:  80,  w: 130, h: 130, ex: -90,  ey:  110 },
+  "car-fuel-tank":    { x:   60, y:  220, w: 170, h: 100, ex:  90,  ey:  250 },
+  "car-battery":      { x: -130, y:  220, w: 160, h: 100, ex: -90,  ey:  250 },
+};
+
 function generateGridLayout(components: MachineComponent[]): DiagramLayout {
   const cols = 3;
   const cellW = 190;
@@ -77,6 +96,12 @@ export function getDiagramLayout(
     return {
       viewBox: "-510 -265 1020 560",
       positions: P101_POSITIONS,
+    };
+  }
+  if (machineId === "car-801") {
+    return {
+      viewBox: "-460 -310 920 660",
+      positions: CAR801_POSITIONS,
     };
   }
   return generateGridLayout(components);
