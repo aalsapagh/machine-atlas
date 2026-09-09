@@ -69,7 +69,16 @@ export type TranslationKey =
   | "sideView"
   | "topView"
   | "fitModel"
-  | "noMatch";
+  | "noMatch"
+  | "currentStatus"
+  | "linkedSensors"
+  | "interval"
+  | "dueIn"
+  | "overdue"
+  | "isolate"
+  | "noMaintenanceHistory"
+  | "noFailureModes"
+  | "noSpareParts";
 
 type Translations = Record<TranslationKey, string>;
 
@@ -146,6 +155,15 @@ export const translations: Record<"en" | "ar", Translations> = {
     topView: "Top",
     fitModel: "Fit",
     noMatch: "No components match",
+    currentStatus: "Current Status",
+    linkedSensors: "Linked Sensors",
+    interval: "Interval",
+    dueIn: "Due In",
+    overdue: "overdue",
+    isolate: "Isolate",
+    noMaintenanceHistory: "No maintenance history recorded.",
+    noFailureModes: "No known failure modes recorded for this component.",
+    noSpareParts: "No spare parts associated with this component.",
   },
   ar: {
     appName: "أطلس الآلات الصناعية",
@@ -219,5 +237,14 @@ export const translations: Record<"en" | "ar", Translations> = {
     topView: "علوي",
     fitModel: "ملاءمة",
     noMatch: "لا توجد مكونات تطابق",
+    currentStatus: "الحالة الحالية",
+    linkedSensors: "أجهزة الاستشعار المرتبطة",
+    interval: "الفترة",
+    dueIn: "المتبقي",
+    overdue: "متأخر",
+    isolate: "عزل",
+    noMaintenanceHistory: "لا يوجد سجل صيانة مسجّل.",
+    noFailureModes: "لا توجد أوضاع عطل معروفة لهذا المكون.",
+    noSpareParts: "لا توجد قطع غيار مرتبطة بهذا المكون.",
   },
 };

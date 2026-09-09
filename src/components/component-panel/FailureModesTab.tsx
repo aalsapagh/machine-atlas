@@ -1,5 +1,6 @@
 import { AlertTriangle } from "lucide-react";
 import type { MachineComponent } from "../../types/machine";
+import { useTranslation } from "../../i18n/useTranslation";
 
 const severityColor: Record<string, string> = {
   low: "text-industrial-healthy border-industrial-healthy/40 bg-industrial-healthy/10",
@@ -8,8 +9,10 @@ const severityColor: Record<string, string> = {
 };
 
 export function FailureModesTab({ component }: { component: MachineComponent }) {
+  const { t } = useTranslation();
+
   if (component.failureModes.length === 0) {
-    return <p className="text-sm text-industrial-muted">No known failure modes recorded for this component.</p>;
+    return <p className="text-sm text-industrial-muted">{t("noFailureModes")}</p>;
   }
 
   return (
@@ -22,11 +25,11 @@ export function FailureModesTab({ component }: { component: MachineComponent }) 
               {fm.name}
             </div>
             <span className={`rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase ${severityColor[fm.severity]}`}>
-              {fm.severity}
+              {t(fm.severity as "low" | "medium" | "high")}
             </span>
           </div>
           <div className="mt-2">
-            <div className="text-[10px] uppercase tracking-wide text-industrial-muted">Symptoms</div>
+            <div className="text-[10px] uppercase tracking-wide text-industrial-muted">{t("symptoms")}</div>
             <ul className="mt-1 list-inside list-disc text-xs text-industrial-text">
               {fm.symptoms.map((s, j) => (
                 <li key={j}>{s}</li>
@@ -34,7 +37,7 @@ export function FailureModesTab({ component }: { component: MachineComponent }) 
             </ul>
           </div>
           <div className="mt-2">
-            <div className="text-[10px] uppercase tracking-wide text-industrial-muted">Recommended Action</div>
+            <div className="text-[10px] uppercase tracking-wide text-industrial-muted">{t("recommendedAction")}</div>
             <p className="mt-1 text-xs text-industrial-text">{fm.recommendedAction}</p>
           </div>
         </div>

@@ -2,29 +2,31 @@ import { CheckSquare, Clock } from "lucide-react";
 import type { MachineComponent } from "../../types/machine";
 import { formatDate, daysUntil } from "../../utils/machineHelpers";
 import { Section } from "./OverviewTab";
+import { useTranslation } from "../../i18n/useTranslation";
 
 export function MaintenanceTab({ component }: { component: MachineComponent }) {
+  const { t } = useTranslation();
   const remaining = daysUntil(component.nextMaintenanceDate);
   const overdue = remaining < 0;
 
   return (
     <div className="flex flex-col gap-4 text-sm">
       <div className="grid grid-cols-2 gap-2">
-        <StatBox label="Last Maintenance" value={formatDate(component.lastMaintenanceDate)} />
+        <StatBox label={t("lastMaintenance")} value={formatDate(component.lastMaintenanceDate)} />
         <StatBox
-          label="Next Maintenance"
+          label={t("nextMaintenance")}
           value={formatDate(component.nextMaintenanceDate)}
           highlight={overdue ? "critical" : remaining <= 14 ? "warning" : undefined}
         />
-        <StatBox label="Interval" value={`${component.maintenanceIntervalDays} days`} />
+        <StatBox label={t("interval")} value={`${component.maintenanceIntervalDays} ${t("days")}`} />
         <StatBox
-          label="Due In"
-          value={overdue ? `${Math.abs(remaining)}d overdue` : `${remaining} days`}
+          label={t("dueIn")}
+          value={overdue ? `${Math.abs(remaining)}d ${t("overdue")}` : `${remaining} ${t("days")}`}
           highlight={overdue ? "critical" : remaining <= 14 ? "warning" : undefined}
         />
       </div>
 
-      <Section title="Maintenance Checklist">
+      <Section title={t("maintenanceChecklist")}>
         <ul className="flex flex-col gap-1.5">
           {component.maintenanceChecklist.map((item, i) => (
             <li key={i} className="flex items-start gap-2 text-industrial-text">
@@ -35,7 +37,7 @@ export function MaintenanceTab({ component }: { component: MachineComponent }) {
         </ul>
       </Section>
 
-      <Section title="Maintenance History">
+      <Section title={t("maintenanceHistory")}>
         <ul className="flex flex-col gap-2">
           {component.maintenanceHistory.map((entry, i) => (
             <li key={i} className="rounded-md border border-industrial-border bg-industrial-panel-alt p-2">
@@ -51,7 +53,7 @@ export function MaintenanceTab({ component }: { component: MachineComponent }) {
             </li>
           ))}
           {component.maintenanceHistory.length === 0 && (
-            <li className="text-xs text-industrial-muted">No maintenance history recorded.</li>
+            <li className="text-xs text-industrial-muted">{t("noMaintenanceHistory")}</li>
           )}
         </ul>
       </Section>

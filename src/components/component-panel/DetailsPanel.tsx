@@ -7,6 +7,7 @@ import { MaintenanceTab } from "./MaintenanceTab";
 import { FailureModesTab } from "./FailureModesTab";
 import { SparePartsTab } from "./SparePartsTab";
 import { useTranslation } from "../../i18n/useTranslation";
+import { useLocalizedComponent } from "../../i18n/useLocalizedComponent";
 import type { ActivePanel } from "../../types/machine";
 
 export function DetailsPanel({ onClose }: { onClose?: () => void }) {
@@ -20,7 +21,8 @@ export function DetailsPanel({ onClose }: { onClose?: () => void }) {
   const setActivePanel = useMachineStore((s) => s.setActivePanel);
   const { t } = useTranslation();
 
-  const component = getComponentFromMachine(selectedMachineId, selectedComponentId);
+  const rawComponent = getComponentFromMachine(selectedMachineId, selectedComponentId);
+  const component = useLocalizedComponent(rawComponent ?? ({} as never), selectedMachineId ?? "");
 
   const TABS: { id: ActivePanel; label: string }[] = [
     { id: "overview", label: t("overview") },
@@ -29,7 +31,7 @@ export function DetailsPanel({ onClose }: { onClose?: () => void }) {
     { id: "spare-parts", label: t("spareParts") },
   ];
 
-  if (!component) {
+  if (!rawComponent) {
     return (
       <aside className="hidden h-full w-80 shrink-0 flex-col border-l border-industrial-border bg-industrial-panel p-6 text-sm text-industrial-muted lg:flex">
         <p>Select a component in the 3D viewport or the component tree to see its details.</p>
@@ -110,7 +112,7 @@ export function DetailsPanel({ onClose }: { onClose?: () => void }) {
             onClick={() => isolateComponent(component.id)}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-industrial-border bg-industrial-panel-alt py-1.5 text-xs font-medium text-industrial-text hover:border-industrial-accent/50"
           >
-            Isolate
+            {t("isolate")}
           </button>
         )}
         <button

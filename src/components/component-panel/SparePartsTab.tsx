@@ -1,5 +1,6 @@
 import { Package } from "lucide-react";
 import type { MachineComponent } from "../../types/machine";
+import { useTranslation } from "../../i18n/useTranslation";
 
 const stockColor: Record<string, string> = {
   "in-stock": "text-industrial-healthy border-industrial-healthy/40 bg-industrial-healthy/10",
@@ -7,15 +8,17 @@ const stockColor: Record<string, string> = {
   "out-of-stock": "text-industrial-critical border-industrial-critical/40 bg-industrial-critical/10",
 };
 
-const stockLabel: Record<string, string> = {
-  "in-stock": "In Stock",
-  "low-stock": "Low Stock",
-  "out-of-stock": "Out of Stock",
-};
-
 export function SparePartsTab({ component }: { component: MachineComponent }) {
+  const { t } = useTranslation();
+
+  const stockLabel: Record<string, string> = {
+    "in-stock": t("inStock"),
+    "low-stock": t("lowStock"),
+    "out-of-stock": t("outOfStock"),
+  };
+
   if (component.spareParts.length === 0) {
-    return <p className="text-sm text-industrial-muted">No spare parts associated with this component.</p>;
+    return <p className="text-sm text-industrial-muted">{t("noSpareParts")}</p>;
   }
 
   return (
@@ -32,11 +35,11 @@ export function SparePartsTab({ component }: { component: MachineComponent }) {
             </span>
           </div>
           <dl className="mt-2 grid grid-cols-2 gap-x-2 gap-y-1 text-xs">
-            <dt className="text-industrial-muted">Part Number</dt>
+            <dt className="text-industrial-muted">{t("partNumber")}</dt>
             <dd className="text-right font-mono text-industrial-text">{sp.partNumber}</dd>
-            <dt className="text-industrial-muted">Quantity</dt>
+            <dt className="text-industrial-muted">{t("quantity")}</dt>
             <dd className="text-right text-industrial-text">{sp.quantity}</dd>
-            <dt className="text-industrial-muted">Supplier</dt>
+            <dt className="text-industrial-muted">{t("supplier")}</dt>
             <dd className="text-right text-industrial-text">{sp.supplier}</dd>
           </dl>
         </div>
