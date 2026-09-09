@@ -4,22 +4,23 @@ import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { useMachineStore } from "../../store/machineStore";
 
-const VIEW_POSITIONS: Record<string, [number, number, number]> = {
-  default: [5.5, 3.2, 6.5],
-  front: [0, 1, 9],
-  side: [9, 1, 0],
-  top: [0.2, 8.5, 0.1],
-};
+// Assembly spans X = -3.4 (motor) to X = 0.6 (pump casing) → centre ≈ -1.4
+const TARGET: [number, number, number] = [-1.4, 0.4, 0];
 
-const TARGET: [number, number, number] = [-0.2, 0.3, 0];
+const VIEW_POSITIONS: Record<string, [number, number, number]> = {
+  default: [3.5, 4.0, 7.5],    // professional 3/4 view – front-right elevated
+  front:   [-1.4, 1.8, 9.5],   // straight-on (looking along -Z)
+  side:    [7.5, 1.8, 0.0],    // right-side view (sees pump casing face)
+  top:     [-1.4, 9.5, 0.2],   // plan view
+};
 
 export function CameraRig({ controlsRef }: { controlsRef: React.RefObject<OrbitControlsImpl | null> }) {
   const { camera } = useThree();
-  const cameraView = useMachineStore((s) => s.cameraView);
+  const cameraView       = useMachineStore((s) => s.cameraView);
   const cameraResetToken = useMachineStore((s) => s.cameraResetToken);
-  const goal = useRef(new THREE.Vector3(...VIEW_POSITIONS.default));
-  const goalTarget = useRef(new THREE.Vector3(...TARGET));
-  const animating = useRef(false);
+  const goal             = useRef(new THREE.Vector3(...VIEW_POSITIONS.default));
+  const goalTarget       = useRef(new THREE.Vector3(...TARGET));
+  const animating        = useRef(false);
 
   useEffect(() => {
     const pos = VIEW_POSITIONS[cameraView] ?? VIEW_POSITIONS.default;
@@ -31,14 +32,15 @@ export function CameraRig({ controlsRef }: { controlsRef: React.RefObject<OrbitC
 
   useFrame((_, delta) => {
     if (!animating.current) return;
-    const speed = Math.min(1, delta * 2.5);
+    const speed = Math.min(1, delta * 2.8);
     camera.position.lerp(goal.current, speed);
     const controls = controlsRef.current;
     if (controls) {
       controls.target.lerp(goalTarget.current, speed);
       controls.update();
     }
-    if (camera.position.distanceTo(goal.current) < 0.01) {
+    if (camera.position.distanceTo(goal.current) < 0.015) {
+      camera.position.copy(goal.current);
       animating.current = false;
     }
   });
