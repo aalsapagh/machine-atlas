@@ -3,6 +3,22 @@ import { useMachineStore } from "../store/machineStore";
 import { getComponentArFields } from "./componentTranslationsAr";
 
 /**
+ * Returns the full component list with Arabic names applied when language is "ar".
+ * Safe to call at the top of a component (not inside a loop).
+ */
+export function useLocalizedComponents(
+  components: MachineComponent[],
+  machineId: string
+): MachineComponent[] {
+  const language = useMachineStore((s) => s.language);
+  if (language !== "ar") return components;
+  return components.map((c) => {
+    const arName = getComponentArFields(machineId, c.id)?.name;
+    return arName ? { ...c, name: arName } : c;
+  });
+}
+
+/**
  * Returns the component with Arabic fields overlaid when the active language is "ar".
  * Falls back to English data for any field that has no Arabic translation.
  */

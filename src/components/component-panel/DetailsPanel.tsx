@@ -1,4 +1,4 @@
-import { X, MapPin, Wrench } from "lucide-react";
+import { X } from "lucide-react";
 import { useMachineStore } from "../../store/machineStore";
 import { getComponentFromMachine } from "../../data/machineRegistry";
 import { statusColor, statusLabel } from "../../utils/machineHelpers";
@@ -14,9 +14,6 @@ export function DetailsPanel({ onClose }: { onClose?: () => void }) {
   const selectedComponentId = useMachineStore((s) => s.selectedComponentId);
   const selectedMachineId = useMachineStore((s) => s.selectedMachineId);
   const selectComponent = useMachineStore((s) => s.selectComponent);
-  const isolateComponent = useMachineStore((s) => s.isolateComponent);
-  const isolatedComponentId = useMachineStore((s) => s.isolatedComponentId);
-  const exitIsolation = useMachineStore((s) => s.exitIsolation);
   const activePanel = useMachineStore((s) => s.activePanel);
   const setActivePanel = useMachineStore((s) => s.setActivePanel);
   const { t } = useTranslation();
@@ -38,8 +35,6 @@ export function DetailsPanel({ onClose }: { onClose?: () => void }) {
       </aside>
     );
   }
-
-  const isIsolated = isolatedComponentId === component.id;
 
   return (
     <aside className="flex h-full w-80 shrink-0 flex-col border-l border-industrial-border bg-industrial-panel">
@@ -69,13 +64,6 @@ export function DetailsPanel({ onClose }: { onClose?: () => void }) {
         </button>
       </div>
 
-      <div className="flex items-center gap-1.5 border-b border-industrial-border px-3 py-2">
-        <div className="flex items-center gap-1.5 text-xs text-industrial-muted">
-          <MapPin size={13} />
-          <span className="truncate">{component.location}</span>
-        </div>
-      </div>
-
       <div className="flex gap-1 border-b border-industrial-border px-2 pt-2">
         {TABS.map((tab) => (
           <button
@@ -97,31 +85,6 @@ export function DetailsPanel({ onClose }: { onClose?: () => void }) {
         {activePanel === "maintenance" && <MaintenanceTab component={component} />}
         {activePanel === "failure-modes" && <FailureModesTab component={component} />}
         {activePanel === "spare-parts" && <SparePartsTab component={component} />}
-      </div>
-
-      <div className="flex gap-2 border-t border-industrial-border p-3">
-        {isIsolated ? (
-          <button
-            onClick={exitIsolation}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-industrial-accent/60 bg-industrial-accent/15 py-1.5 text-xs font-medium text-industrial-accent"
-          >
-            {t("exitIsolation")}
-          </button>
-        ) : (
-          <button
-            onClick={() => isolateComponent(component.id)}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-industrial-border bg-industrial-panel-alt py-1.5 text-xs font-medium text-industrial-text hover:border-industrial-accent/50"
-          >
-            {t("isolate")}
-          </button>
-        )}
-        <button
-          onClick={() => setActivePanel("maintenance")}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-industrial-border bg-industrial-panel-alt py-1.5 text-xs font-medium text-industrial-text hover:border-industrial-accent/50"
-        >
-          <Wrench size={13} />
-          {t("maintenance")}
-        </button>
       </div>
     </aside>
   );

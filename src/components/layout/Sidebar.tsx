@@ -3,6 +3,7 @@ import { useMachineStore, ALL_LAYERS } from "../../store/machineStore";
 import { getActiveMachineComponents } from "../../data/machineRegistry";
 import { statusColor } from "../../utils/machineHelpers";
 import { useTranslation } from "../../i18n/useTranslation";
+import { useLocalizedComponents } from "../../i18n/useLocalizedComponent";
 import type { ComponentCategory } from "../../types/machine";
 
 export function Sidebar({ collapsed, onSelectAny }: { collapsed?: boolean; onSelectAny?: () => void }) {
@@ -12,7 +13,8 @@ export function Sidebar({ collapsed, onSelectAny }: { collapsed?: boolean; onSel
   const selectedMachineId = useMachineStore((s) => s.selectedMachineId);
   const { t } = useTranslation();
 
-  const components = getActiveMachineComponents(selectedMachineId);
+  const rawComponents = getActiveMachineComponents(selectedMachineId);
+  const components = useLocalizedComponents(rawComponents, selectedMachineId ?? "");
 
   const grouped = useMemo(() => {
     const map = new Map<ComponentCategory, typeof components>();

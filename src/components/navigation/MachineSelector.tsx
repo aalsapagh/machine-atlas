@@ -4,6 +4,7 @@ import { useMachineStore } from "../../store/machineStore";
 import { machineRegistry } from "../../data/machineRegistry";
 import type { MachineDefinition } from "../../types/machine";
 import { useTranslation } from "../../i18n/useTranslation";
+import { getLocalizedMachineInfo } from "../../i18n/machineTranslationsAr";
 
 // Group machines into display categories
 const INDUSTRIAL_IDS = ["p-101", "ac-301", "gen-401", "conv-501"];
@@ -38,7 +39,7 @@ interface Props {
 export function MachineSelector({ onClose }: Props) {
   const selectedMachineId = useMachineStore((s) => s.selectedMachineId);
   const setSelectedMachine = useMachineStore((s) => s.setSelectedMachine);
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
   const groups = groupRegistry();
 
@@ -84,7 +85,9 @@ export function MachineSelector({ onClose }: Props) {
                 >
                   <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="truncate font-medium">{machine.info.name}</span>
+                      <span className="truncate font-medium">
+                        {getLocalizedMachineInfo(machine.info.id, language)?.name ?? machine.info.name}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-industrial-muted">
                       <span

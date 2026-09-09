@@ -13,16 +13,11 @@ export function MaintenanceTab({ component }: { component: MachineComponent }) {
     <div className="flex flex-col gap-4 text-sm">
       <div className="grid grid-cols-2 gap-2">
         <StatBox label={t("lastMaintenance")} value={formatDate(component.lastMaintenanceDate)} />
-        <StatBox
-          label={t("nextMaintenance")}
-          value={formatDate(component.nextMaintenanceDate)}
-          highlight={overdue ? "critical" : remaining <= 14 ? "warning" : undefined}
-        />
+        <StatBox label={t("nextMaintenance")} value={formatDate(component.nextMaintenanceDate)} />
         <StatBox label={t("interval")} value={`${component.maintenanceIntervalDays} ${t("days")}`} />
         <StatBox
           label={t("dueIn")}
           value={overdue ? `${Math.abs(remaining)}d ${t("overdue")}` : `${remaining} ${t("days")}`}
-          highlight={overdue ? "critical" : remaining <= 14 ? "warning" : undefined}
         />
       </div>
 
@@ -61,13 +56,11 @@ export function MaintenanceTab({ component }: { component: MachineComponent }) {
   );
 }
 
-function StatBox({ label, value, highlight }: { label: string; value: string; highlight?: "warning" | "critical" }) {
-  const color =
-    highlight === "critical" ? "text-industrial-critical" : highlight === "warning" ? "text-industrial-warning" : "text-industrial-text";
+function StatBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-industrial-border bg-industrial-panel-alt p-2">
       <div className="text-[10px] uppercase tracking-wide text-industrial-muted">{label}</div>
-      <div className={`mt-0.5 text-sm font-medium ${color}`}>{value}</div>
+      <div className="mt-0.5 text-sm font-medium text-industrial-text">{value}</div>
     </div>
   );
 }

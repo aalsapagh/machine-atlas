@@ -5,10 +5,7 @@ import { LayersPanel } from "./components/navigation/LayersPanel";
 import { Sidebar } from "./components/layout/Sidebar";
 import { DetailsPanel } from "./components/component-panel/DetailsPanel";
 import { Viewport } from "./features/machine-explorer/Viewport";
-import { DashboardPanel } from "./components/dashboard/DashboardPanel";
 import { ViewControls } from "./components/machine/ViewControls";
-import { IsolationBanner } from "./components/machine/IsolationBanner";
-import { AssistantPanel } from "./components/ai-assistant/AssistantPanel";
 import { useMachineStore } from "./store/machineStore";
 
 function App() {
@@ -21,7 +18,6 @@ function App() {
     if (selectedComponentId) setMobileDetailsOpen(true);
   }, [selectedComponentId]);
 
-  // Apply RTL direction and font to the root element
   useEffect(() => {
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = language;
@@ -50,10 +46,7 @@ function App() {
         <main className="relative min-w-0 flex-1">
           <Viewport />
           <LayersPanel />
-          <DashboardPanel />
-          <IsolationBanner />
           <ViewControls />
-          <AssistantPanel />
         </main>
 
         <div className="hidden lg:flex">

@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Search, Layers, Box, RotateCcw, ChevronDown, Sparkles, LayoutDashboard, Languages } from "lucide-react";
+import { Search, Layers, Box, RotateCcw, ChevronDown, Languages } from "lucide-react";
 import { useMachineStore } from "../../store/machineStore";
 import { getMachineById } from "../../data/machineRegistry";
 import { SearchResults } from "./SearchResults";
 import { MachineSelector } from "./MachineSelector";
 import { useTranslation } from "../../i18n/useTranslation";
+import { getLocalizedMachineInfo } from "../../i18n/machineTranslationsAr";
 
 const statusDot: Record<string, string> = {
   Operational: "bg-industrial-healthy",
@@ -23,17 +24,13 @@ export function TopToolbar() {
   const toggleLayersPanel = useMachineStore((s) => s.toggleLayersPanel);
   const layersPanelOpen = useMachineStore((s) => s.layersPanelOpen);
   const resetView = useMachineStore((s) => s.resetView);
-  const toggleAssistant = useMachineStore((s) => s.toggleAssistant);
-  const assistantOpen = useMachineStore((s) => s.assistantOpen);
-  const toggleDashboard = useMachineStore((s) => s.toggleDashboard);
-  const dashboardOpen = useMachineStore((s) => s.dashboardOpen);
   const selectedMachineId = useMachineStore((s) => s.selectedMachineId);
-  const language = useMachineStore((s) => s.language);
   const setLanguage = useMachineStore((s) => s.setLanguage);
 
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const activeMachine = getMachineById(selectedMachineId);
   const machineInfo = activeMachine?.info;
+  const localizedMachine = selectedMachineId ? getLocalizedMachineInfo(selectedMachineId, language) : undefined;
 
   return (
     <header className="relative z-30 flex h-14 shrink-0 items-center gap-4 border-b border-industrial-border bg-industrial-panel px-4">
@@ -56,7 +53,7 @@ export function TopToolbar() {
         >
           <span className="font-medium">{machineInfo?.tag}</span>
           <span className="hidden text-industrial-muted lg:inline">
-            {machineInfo?.type}
+            {localizedMachine?.type ?? machineInfo?.type}
           </span>
           <ChevronDown size={14} className="text-industrial-muted" />
         </button>
@@ -89,10 +86,7 @@ export function TopToolbar() {
       <div className="flex items-center gap-1.5">
         <ToolbarButton label={t("layers")} active={layersPanelOpen} onClick={toggleLayersPanel} icon={<Layers size={16} />} />
         <ToolbarButton label={t("explodedView")} active={explodedView} onClick={toggleExplodedView} icon={<Box size={16} />} />
-        <ToolbarButton label={t("dashboard")} active={dashboardOpen} onClick={toggleDashboard} icon={<LayoutDashboard size={16} />} />
-        <ToolbarButton label={t("aiAssistant")} active={assistantOpen} onClick={toggleAssistant} icon={<Sparkles size={16} />} />
         <ToolbarButton label={t("resetView")} onClick={resetView} icon={<RotateCcw size={16} />} />
-        {/* Language toggle */}
         <button
           onClick={() => setLanguage(language === "en" ? "ar" : "en")}
           title={language === "en" ? "العربية" : "English"}
