@@ -32,6 +32,7 @@ export type TranslationKey =
   | "description"
   | "function"
   | "location"
+  | "designRationale"
   | "status"
   | "maintenanceInterval"
   | "maintenanceChecklist"
@@ -78,7 +79,8 @@ export type TranslationKey =
   | "isolate"
   | "noMaintenanceHistory"
   | "noFailureModes"
-  | "noSpareParts";
+  | "noSpareParts"
+  | "selectComponentHint";
 
 type Translations = Record<TranslationKey, string>;
 
@@ -117,6 +119,7 @@ export const translations: Record<"en" | "ar", Translations> = {
     description: "Description",
     function: "Function",
     location: "Location",
+    designRationale: "Why This Design",
     status: "Status",
     maintenanceInterval: "Maintenance Interval",
     maintenanceChecklist: "Maintenance Checklist",
@@ -164,6 +167,7 @@ export const translations: Record<"en" | "ar", Translations> = {
     noMaintenanceHistory: "No maintenance history recorded.",
     noFailureModes: "No known failure modes recorded for this component.",
     noSpareParts: "No spare parts associated with this component.",
+    selectComponentHint: "Select a component in the 3D viewport or the component tree to see its details.",
   },
   ar: {
     appName: "أطلس الآلات الصناعية",
@@ -199,6 +203,7 @@ export const translations: Record<"en" | "ar", Translations> = {
     description: "الوصف",
     function: "الوظيفة",
     location: "الموقع",
+    designRationale: "لماذا هذا الشكل؟",
     status: "الحالة",
     maintenanceInterval: "فترة الصيانة",
     maintenanceChecklist: "قائمة الصيانة",
@@ -246,5 +251,6 @@ export const translations: Record<"en" | "ar", Translations> = {
     noMaintenanceHistory: "لا يوجد سجل صيانة مسجّل.",
     noFailureModes: "لا توجد أوضاع عطل معروفة لهذا المكون.",
     noSpareParts: "لا توجد قطع غيار مرتبطة بهذا المكون.",
+    selectComponentHint: "اختر مكوناً في العارض ثلاثي الأبعاد أو من شجرة المكونات لعرض تفاصيله.",
   },
 };

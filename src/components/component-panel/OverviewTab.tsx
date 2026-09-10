@@ -12,6 +12,13 @@ export function OverviewTab({ component }: { component: MachineComponent }) {
       <Section title={t("function")}>
         <p className="text-industrial-text">{component.function}</p>
       </Section>
+      {component.designRationale && (
+        <Section title={t("designRationale")}>
+          <p className="rounded-md border border-industrial-border bg-industrial-panel-alt p-2.5 leading-relaxed text-industrial-text">
+            {component.designRationale}
+          </p>
+        </Section>
+      )}
       <Section title={t("location")}>
         <p className="text-industrial-text">{component.location}</p>
       </Section>

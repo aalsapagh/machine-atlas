@@ -17,8 +17,8 @@ export function PumpCasing({ component }: { component: MachineComponent }) {
     opacity,
     roughness:          0.36,
     metalness:          0.30,
-    clearcoat:          0.95,
-    clearcoatRoughness: 0.14,
+    clearcoat:          0.55,
+    clearcoatRoughness: 0.3,
   };
 
   const darkMetal = {
@@ -71,7 +71,7 @@ export function PumpCasing({ component }: { component: MachineComponent }) {
       {/* ── Back cover plate / mechanical-seal housing ── */}
       <mesh position={[0, 0, 0.36]} rotation={[H, 0, 0]} castShadow>
         <cylinderGeometry args={[0.44, 0.44, 0.07, 30]} />
-        <meshPhysicalMaterial color="#0e4078" transparent opacity={opacity} roughness={0.44} metalness={0.28} clearcoat={0.9} clearcoatRoughness={0.18} />
+        <meshPhysicalMaterial color="#0e4078" transparent opacity={opacity} roughness={0.44} metalness={0.28} clearcoat={0.5} clearcoatRoughness={0.3} />
       </mesh>
 
       {/* ── Discharge nozzle (upward, offset toward volute tongue) ── */}
@@ -100,7 +100,7 @@ export function PumpCasing({ component }: { component: MachineComponent }) {
       {/* ── Suction nozzle (front face, +Z direction) ── */}
       <mesh position={[0, -0.11, 0.65]} rotation={[H, 0, 0]} castShadow>
         <cylinderGeometry args={[0.200, 0.200, 0.40, 22]} />
-        <meshPhysicalMaterial color="#1a5aa0" transparent opacity={opacity} roughness={0.38} metalness={0.28} clearcoat={0.9} clearcoatRoughness={0.16} />
+        <meshPhysicalMaterial color="#1a5aa0" transparent opacity={opacity} roughness={0.38} metalness={0.28} clearcoat={0.5} clearcoatRoughness={0.28} />
       </mesh>
       {/* Suction flange */}
       <mesh position={[0, -0.11, 0.865]} rotation={[H, 0, 0]}>

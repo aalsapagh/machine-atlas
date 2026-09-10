@@ -19,6 +19,8 @@ export const machineComponents: MachineComponent[] = [
     function:
       "Converts electrical energy into rotational mechanical energy to drive the pump impeller.",
     location: "Drive end, mounted on the base plate opposite the pump casing.",
+    designRationale:
+      "The body is a cylinder because that is the natural shape of the rotating magnetic field inside: a round laminated stator sheds heat and resists internal pressure evenly in every direction, with no corners to concentrate stress. The ribbed fins around it exist purely to add surface area — more skin to shed heat into passing air without making the motor any bigger. The rear fan cowl mirrors that logic in plastic: light, cheap to mould, and shaped to duct air straight over the fins. Four wide-set feet, not two, resist the twisting reaction torque the motor produces every time it starts.",
     status: "healthy",
     maintenanceIntervalDays: 180,
     lastMaintenanceDate: "2026-04-02",
@@ -64,6 +66,8 @@ export const machineComponents: MachineComponent[] = [
       "A flexible elastomeric coupling connecting the motor shaft to the pump shaft, absorbing minor misalignment.",
     function: "Transmits torque from the motor shaft to the pump shaft while damping vibration.",
     location: "Between the motor and the bearing housing.",
+    designRationale:
+      "Two shafts driven by separate machines are never perfectly concentric — thermal growth and foundation settling alone guarantee a fraction of a millimetre of drift. A rigid joint would transmit every bit of that misalignment straight into both sets of bearings as a punishing side load. The rubber-insert design deliberately gives a little, flexing to absorb small offsets and torsional shock, and is built as the sacrificial part: cheap to replace, it fails before the motor or pump shaft ever does.",
     status: "healthy",
     maintenanceIntervalDays: 90,
     lastMaintenanceDate: "2026-06-20",
@@ -106,6 +110,8 @@ export const machineComponents: MachineComponent[] = [
       "Houses the radial and thrust bearings that support the pump shaft and maintain axial/radial alignment.",
     function: "Supports the rotating shaft and absorbs radial and axial loads from the impeller.",
     location: "Between the coupling and the pump casing, on the base plate.",
+    designRationale:
+      "A cylinder wrapped tightly around the bearings so the oil bath inside stays fully sealed and the radial load from the spinning shaft is carried evenly around the full circumference, rather than concentrated on one wall. The wide pedestal foot beneath it is oversized on purpose — bearings fail from misalignment more than almost anything else, so the housing is built stiff enough that it will not flex or tilt under load. The small round sight glass on the side exists only so a technician can check the oil level at a glance without opening the housing and letting contamination in.",
     status: "warning",
     maintenanceIntervalDays: 120,
     lastMaintenanceDate: "2026-03-10",
@@ -157,6 +163,8 @@ export const machineComponents: MachineComponent[] = [
       "A precision-machined steel shaft that transmits rotational torque from the coupling to the impeller.",
     function: "Rotates the impeller at operating speed while remaining supported by the bearing housing.",
     location: "Running through the bearing housing into the pump casing.",
+    designRationale:
+      "A plain round bar because a circular cross-section is the only shape that carries torque and bending loads identically no matter which way it rotates — anything else would flex unevenly once per revolution and shake itself apart. It is deliberately slender relative to its length: a shaft this size is stiff enough to hold the impeller precisely centred inside the casing, but not so massive that it wastes material or adds unnecessary rotating inertia. Where the coupling, bearings and impeller mount, the diameter steps up slightly — a shoulder for each part to seat against, so nothing can creep sideways under load.",
     status: "healthy",
     maintenanceIntervalDays: 365,
     lastMaintenanceDate: "2025-12-01",
@@ -199,6 +207,8 @@ export const machineComponents: MachineComponent[] = [
       "The volute-shaped casing that contains the impeller and directs flow from the eye to the discharge nozzle.",
     function: "Converts the impeller's kinetic energy into pressure head and guides fluid to the outlet.",
     location: "Discharge end of the pump, mounted on the base plate.",
+    designRationale:
+      "The spiral (volute) shape is the whole reason the pump can produce pressure at all: fluid leaves the fast-spinning impeller at high speed but low pressure, and the casing's cross-section is deliberately widened, turn by turn, as it wraps toward the discharge nozzle. That gradual widening slows the fluid down in a controlled way, and by Bernoulli's principle, that lost velocity reappears as gained pressure. A sudden, non-spiral chamber would let the flow separate and swirl chaotically instead, wasting energy as turbulence rather than delivering head. The split bolted flanges exist purely for maintenance — they let the whole casing open to reach the impeller and seal without disturbing the piping.",
     status: "healthy",
     maintenanceIntervalDays: 180,
     lastMaintenanceDate: "2026-05-15",
@@ -243,6 +253,8 @@ export const machineComponents: MachineComponent[] = [
       "A closed-vane impeller keyed to the shaft, generating the centrifugal force that produces flow and head.",
     function: "Accelerates fluid outward from the eye of the pump to build discharge pressure.",
     location: "Inside the pump casing, keyed to the shaft.",
+    designRationale:
+      "Fluid enters straight down the centre (the \"eye\") and has to leave moving outward and fast, so the vanes are curved backward against the direction of rotation rather than straight or forward-swept — that curvature is what gives the pump a stable, efficient pressure curve across its operating range instead of one that surges or stalls. The two enclosing shroud discs (a \"closed\" impeller) seal the vane passages on both sides so fluid can only travel the intended path outward through them, instead of leaking back around the edges and wasting the energy just spent accelerating it. It is deliberately the smallest, lightest rotating part in the assembly, since every gram here is inertia the motor has to spin up and the shaft has to support.",
     status: "warning",
     maintenanceIntervalDays: 180,
     lastMaintenanceDate: "2026-02-18",
@@ -285,6 +297,8 @@ export const machineComponents: MachineComponent[] = [
       "A rigid steel base plate that aligns and supports the motor, bearing housing, and pump casing as one unit.",
     function: "Maintains precise relative alignment between the motor and pump while transmitting loads to the foundation.",
     location: "Mounted directly on the concrete foundation.",
+    designRationale:
+      "A flat plate alone would sag slightly under the weight of the motor and pump and flex with every vibration, and even a fraction of a millimetre of that flex reappears at the coupling as the misalignment bearings hate. The three I-beam-style ribs underneath solve that the efficient way: they add bending stiffness in the direction that matters most without the weight (or cost) of a solid steel slab. Casting it as one welded unit, rather than bolting the motor and pump to separate foundations, is what actually guarantees their shafts stay aligned — the whole point of the base plate is to make motor and pump move together, not independently, as the machine heats up and vibrates.",
     status: "healthy",
     maintenanceIntervalDays: 365,
     lastMaintenanceDate: "2025-09-30",
@@ -320,6 +334,8 @@ export const machineComponents: MachineComponent[] = [
     description: "The reinforced concrete pad that anchors the entire pump skid to the floor.",
     function: "Provides a stable, vibration-damping mounting surface for the pump assembly.",
     location: "Ground level beneath the base plate.",
+    designRationale:
+      "A rotating machine is, by nature, a small vibration source, and mounting it directly on a light structure would let that vibration travel into the building and amplify. The concrete pad is made deliberately massive — often several times the weight of the pump skid it carries — because sheer mass is the simplest, most reliable way to absorb vibration energy: a heavy, inert block barely moves in response to forces that would visibly shake something lighter. It is also wider than the base plate on every side, so the whole assembly's weight spreads out before reaching the soil or floor slab beneath it, rather than concentrating load under four small feet.",
     status: "healthy",
     maintenanceIntervalDays: 730,
     lastMaintenanceDate: "2025-01-20",
@@ -353,6 +369,8 @@ export const machineComponents: MachineComponent[] = [
     description: "The suction pipeline delivering process fluid from upstream storage into the pump eye.",
     function: "Supplies fluid to the pump suction with minimal turbulence and adequate NPSH.",
     location: "Connected to the bottom of the pump casing on the suction side.",
+    designRationale:
+      "The suction side runs at the lowest pressure anywhere in the system, and if that pressure drops too far, dissolved gas comes out of the fluid as bubbles that collapse violently inside the pump — cavitation, which pits metal and can destroy an impeller in weeks. The inlet pipe is kept straight and generously sized specifically to avoid that: a short, low-friction path with no unnecessary elbows or restrictions preserves as much of the available suction pressure (NPSH) as possible before it reaches the eye of the impeller. The strainer at its inlet is a deliberate weak point too, sized to be the thing that clogs and gets cleaned, rather than letting debris reach — and wreck — the impeller itself.",
     status: "healthy",
     maintenanceIntervalDays: 365,
     lastMaintenanceDate: "2026-01-08",
@@ -394,6 +412,8 @@ export const machineComponents: MachineComponent[] = [
     description: "The discharge pipeline carrying pressurized fluid from the pump casing to downstream process equipment.",
     function: "Conveys pressurized discharge flow away from the pump while withstanding system pressure.",
     location: "Connected to the top of the pump casing on the discharge side.",
+    designRationale:
+      "Unlike the suction pipe, this side of the pump is under full working pressure, so wall thickness and flange ratings matter far more here than pipe diameter. Routing it out the top of the casing keeps the connection at the volute's natural high point, where the discharge nozzle already sits after the fluid has finished gaining pressure. The built-in check valve is there for the moment the pump stops, not while it runs: without it, the pressurised column of fluid already in the discharge line would slam backward through the idle impeller — a water-hammer event that stresses the shaft and casing far more than steady running ever does.",
     status: "healthy",
     maintenanceIntervalDays: 365,
     lastMaintenanceDate: "2026-01-08",
@@ -429,6 +449,8 @@ export const machineComponents: MachineComponent[] = [
     description: "A local dial gauge providing direct visual indication of pump discharge pressure.",
     function: "Displays real-time discharge pressure for operator monitoring and diagnostics.",
     location: "Mounted on the outlet pipe near the pump casing.",
+    designRationale:
+      "It is round for a purely mechanical reason: inside, pressure straightens a curved Bourdon tube by an amount proportional to pressure, and that motion is easiest to convert into a needle sweeping a circular scale, giving every psi of range the same angular resolution regardless of where the needle currently sits. Being a local, purely mechanical instrument — no electronics, no power supply — means it keeps reading even if the plant's control system or power goes down, which is exactly when an operator standing at the pump most needs to see pressure directly. It is mounted right at the discharge nozzle, before the fluid travels any distance downstream and loses signal to friction or elevation change.",
     status: "healthy",
     maintenanceIntervalDays: 365,
     lastMaintenanceDate: "2025-12-15",
@@ -464,6 +486,8 @@ export const machineComponents: MachineComponent[] = [
     description: "An RTD temperature transmitter monitoring bearing housing temperature for condition monitoring.",
     function: "Continuously measures bearing temperature and feeds data to the monitoring system.",
     location: "Mounted on the bearing housing.",
+    designRationale:
+      "Bearing temperature is one of the earliest warning signs of a failing bearing — friction from a degrading race or starved lubrication shows up as heat well before it shows up as noise or vibration. The RTD element is built as a small probe threaded directly into the bearing housing wall precisely so its tip sits in metal-to-metal contact with the housing, rather than just reading nearby air temperature, which would lag the real bearing condition by minutes. It is deliberately compact and low-profile because its only job is measurement — anything larger would add thermal mass of its own and slow down exactly the response time the sensor exists to provide.",
     status: "critical",
     maintenanceIntervalDays: 365,
     lastMaintenanceDate: "2025-08-22",

@@ -39,6 +39,7 @@ export function useLocalizedComponent(
     description: ar.description ?? component.description,
     function: ar.function ?? component.function,
     location: ar.location ?? component.location,
+    designRationale: ar.designRationale ?? component.designRationale,
     maintenanceChecklist: ar.maintenanceChecklist ?? component.maintenanceChecklist,
     failureModes:
       ar.failureModes

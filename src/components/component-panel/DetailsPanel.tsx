@@ -31,7 +31,7 @@ export function DetailsPanel({ onClose }: { onClose?: () => void }) {
   if (!rawComponent) {
     return (
       <aside className="hidden h-full w-80 shrink-0 flex-col border-l border-industrial-border bg-industrial-panel p-6 text-sm text-industrial-muted lg:flex">
-        <p>Select a component in the 3D viewport or the component tree to see its details.</p>
+        <p>{t("selectComponentHint")}</p>
       </aside>
     );
   }

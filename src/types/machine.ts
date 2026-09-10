@@ -49,6 +49,8 @@ export interface MachineComponent {
   description: string;
   function: string;
   location: string;
+  /** Engineering rationale: why the component has the shape/material/layout it has. */
+  designRationale?: string;
   status: ComponentStatus;
   maintenanceIntervalDays: number;
   lastMaintenanceDate: string;

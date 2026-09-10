@@ -11,7 +11,7 @@ export function BearingHousing({ component }: { component: MachineComponent }) {
   const paint = {
     color: baseColor, emissive: emissiveColor, emissiveIntensity,
     transparent: true, opacity, roughness: 0.40, metalness: 0.30,
-    clearcoat: 0.92, clearcoatRoughness: 0.16,
+    clearcoat: 0.55, clearcoatRoughness: 0.3,
   };
 
   return (
@@ -33,13 +33,13 @@ export function BearingHousing({ component }: { component: MachineComponent }) {
       {/* ── Mounting pedestal ── */}
       <mesh position={[0, -0.34, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.76, 0.13, 0.58]} />
-        <meshPhysicalMaterial color="#0c3560" transparent opacity={opacity} roughness={0.5} metalness={0.28} clearcoat={0.85} clearcoatRoughness={0.2} />
+        <meshPhysicalMaterial color="#0c3560" transparent opacity={opacity} roughness={0.5} metalness={0.28} clearcoat={0.45} clearcoatRoughness={0.32} />
       </mesh>
       {/* Gussets */}
       {[-0.26, 0.26].map((x, i) => (
         <mesh key={i} position={[x, -0.28, 0]} castShadow>
           <boxGeometry args={[0.06, 0.13, 0.54]} />
-          <meshPhysicalMaterial color="#0c3560" transparent opacity={opacity} roughness={0.55} metalness={0.28} clearcoat={0.8} clearcoatRoughness={0.2} />
+          <meshPhysicalMaterial color="#0c3560" transparent opacity={opacity} roughness={0.55} metalness={0.28} clearcoat={0.45} clearcoatRoughness={0.32} />
         </mesh>
       ))}
 

@@ -19,8 +19,8 @@ export function Motor({ component }: { component: MachineComponent }) {
     opacity,
     roughness,
     metalness:          0.32,
-    clearcoat:          0.95,
-    clearcoatRoughness: 0.14,
+    clearcoat:          0.55,
+    clearcoatRoughness: 0.3,
   });
 
   /** Dark accent (end bells, terminal box body) */
@@ -30,8 +30,8 @@ export function Motor({ component }: { component: MachineComponent }) {
     opacity,
     roughness:          0.42,
     metalness:          0.3,
-    clearcoat:          0.9,
-    clearcoatRoughness: 0.18,
+    clearcoat:          0.5,
+    clearcoatRoughness: 0.32,
   };
 
   /** Black plastic (fan cowl) */
@@ -112,7 +112,7 @@ export function Motor({ component }: { component: MachineComponent }) {
       </mesh>
       <mesh position={[0.08, 0.715, 0]}>
         <boxGeometry args={[0.38, 0.03, 0.32]} />
-        <meshPhysicalMaterial color={baseColor} transparent opacity={opacity} roughness={0.35} metalness={0.3} clearcoat={0.95} clearcoatRoughness={0.12} />
+        <meshPhysicalMaterial color={baseColor} transparent opacity={opacity} roughness={0.35} metalness={0.3} clearcoat={0.55} clearcoatRoughness={0.28} />
       </mesh>
       {/* Conduit gland on side of terminal box */}
       <mesh position={[0.08, 0.60, -0.24]}>
@@ -126,7 +126,7 @@ export function Motor({ component }: { component: MachineComponent }) {
           {/* Foot pad */}
           <mesh position={[x, -0.535, z]} castShadow receiveShadow>
             <boxGeometry args={[0.28, 0.09, 0.24]} />
-            <meshPhysicalMaterial color="#0c3560" transparent opacity={opacity} roughness={0.5} metalness={0.3} clearcoat={0.8} clearcoatRoughness={0.2} />
+            <meshPhysicalMaterial color="#0c3560" transparent opacity={opacity} roughness={0.5} metalness={0.3} clearcoat={0.45} clearcoatRoughness={0.32} />
           </mesh>
           {/* Bolt */}
           <mesh position={[x, -0.605, z]}>
