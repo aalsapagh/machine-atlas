@@ -1,5 +1,4 @@
 import type { MachineComponent } from "../../types/machine";
-import { statusColor, statusLabel } from "../../utils/machineHelpers";
 import { useTranslation } from "../../i18n/useTranslation";
 
 export function OverviewTab({ component }: { component: MachineComponent }) {
@@ -16,13 +15,7 @@ export function OverviewTab({ component }: { component: MachineComponent }) {
       <Section title={t("location")}>
         <p className="text-industrial-text">{component.location}</p>
       </Section>
-      <Section title={t("currentStatus")}>
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: statusColor[component.status] }} />
-          <span className="font-medium text-industrial-text">{statusLabel[component.status]}</span>
-        </div>
-      </Section>
-      {component.sensorIds.length > 0 && (
+{component.sensorIds.length > 0 && (
         <Section title={t("linkedSensors")}>
           <div className="flex flex-wrap gap-1.5">
             {component.sensorIds.map((id) => (

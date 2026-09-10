@@ -3,33 +3,28 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment, Lightformer } from "@react-three/drei";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
-import { PumpAssembly } from "../../components/machine/PumpAssembly";
-import { CameraRig } from "../../components/machine/CameraRig";
+import { GenericMachineAssembly } from "../../components/machine/GenericMachineAssembly";
 import { HoverTooltip } from "../../components/machine/HoverTooltip";
 import { ViewControls } from "../../components/machine/ViewControls";
 import { IsolationBanner } from "../../components/machine/IsolationBanner";
+import { useMachineStore } from "../../store/machineStore";
 
-// Assembly centre (motor X=-3.4, pump casing X=0.6 → centre ≈ -1.4)
-const ORBIT_TARGET = new THREE.Vector3(-1.4, 0.4, 0);
+const ORBIT_TARGET = new THREE.Vector3(0, 0.5, 0);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Synthetic environment – mimics an industrial workshop HDRI without any
-// external file fetch.  Lightformers emit into an off-screen cube map that
-// MeshPhysicalMaterial uses for specular IBL & clearcoat reflections.
+// Same synthetic workshop environment as PumpViewer3D
 // ─────────────────────────────────────────────────────────────────────────────
 function WorkshopEnvironment() {
   return (
     <Environment resolution={512} background={false}>
-      {/* Overhead fluorescent strip – bright white/neutral */}
       <Lightformer
         form="rect"
         intensity={6}
-        position={[-1.4, 9, 0]}
+        position={[0, 9, 0]}
         scale={[14, 2, 1]}
         rotation-x={Math.PI / 2}
         color="#ddeeff"
       />
-      {/* Left wall bounce – cool industrial blue */}
       <Lightformer
         form="rect"
         intensity={2.5}
@@ -38,7 +33,6 @@ function WorkshopEnvironment() {
         rotation-y={Math.PI / 2}
         color="#5588cc"
       />
-      {/* Right wall bounce – warm fill */}
       <Lightformer
         form="rect"
         intensity={1.8}
@@ -47,28 +41,25 @@ function WorkshopEnvironment() {
         rotation-y={-Math.PI / 2}
         color="#ffddaa"
       />
-      {/* Front fill – faces camera, gives specular catch on forward surfaces */}
       <Lightformer
         form="rect"
         intensity={1.2}
-        position={[-1.4, 2, 12]}
+        position={[0, 2, 12]}
         scale={[14, 5, 1]}
         rotation-y={Math.PI}
         color="#c8d8f0"
       />
-      {/* Rear separation – rim light from behind */}
       <Lightformer
         form="rect"
         intensity={0.6}
-        position={[-1.4, 4, -10]}
+        position={[0, 4, -10]}
         scale={[14, 4, 1]}
         color="#ffe8bb"
       />
-      {/* Floor bounce – very dim upward fill */}
       <Lightformer
         form="ring"
         intensity={0.25}
-        position={[-1.4, -3, 0]}
+        position={[0, -3, 0]}
         scale={8}
         rotation-x={-Math.PI / 2}
         color="#3a4a5a"
@@ -77,16 +68,10 @@ function WorkshopEnvironment() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Direct scene lights (shadows + diffuse fill that Environment alone misses)
-// ─────────────────────────────────────────────────────────────────────────────
 function SceneLights() {
   return (
     <>
-      {/* Low ambient so unlit surfaces stay dark but not pure black */}
       <ambientLight intensity={0.25} color="#aabbcc" />
-
-      {/* Key – upper-right-front, casts crisp shadows */}
       <directionalLight
         position={[8, 14, 10]}
         intensity={1.6}
@@ -101,22 +86,13 @@ function SceneLights() {
         shadow-camera-bottom={-10}
         shadow-bias={-0.001}
       />
-
-      {/* Fill – upper-left, cool */}
       <directionalLight position={[-7, 8, 4]} intensity={0.55} color="#88aaff" />
-
-      {/* Rim – behind, warm separation light */}
-      <directionalLight position={[-2, 6, -10]} intensity={0.4} color="#ffddaa" />
-
-      {/* Under-bounce – softens base-plate shadow */}
-      <pointLight position={[-1.4, -1.0, 2.5]} intensity={0.3} color="#2a3848" />
+      <directionalLight position={[0, 6, -10]} intensity={0.4} color="#ffddaa" />
+      <pointLight position={[0, -1.0, 2.5]} intensity={0.3} color="#2a3848" />
     </>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Ground – shadow receiver + reference grid
-// ─────────────────────────────────────────────────────────────────────────────
 function Ground() {
   return (
     <>
@@ -129,22 +105,20 @@ function Ground() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Scene root (must live inside Canvas)
-// ─────────────────────────────────────────────────────────────────────────────
-function PumpScene({
+function GenericScene({
   controlsRef,
+  machineId,
 }: {
   controlsRef: React.RefObject<OrbitControlsImpl | null>;
+  machineId: string;
 }) {
   return (
     <>
       <WorkshopEnvironment />
       <SceneLights />
       <Ground />
-      <PumpAssembly />
+      <GenericMachineAssembly machineId={machineId} />
       <HoverTooltip />
-      <CameraRig controlsRef={controlsRef} />
 
       <OrbitControls
         ref={controlsRef as React.Ref<OrbitControlsImpl>}
@@ -152,24 +126,22 @@ function PumpScene({
         enableDamping
         dampingFactor={0.07}
         minDistance={2.5}
-        maxDistance={22}
+        maxDistance={30}
         maxPolarAngle={Math.PI * 0.82}
       />
     </>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Public export
-// ─────────────────────────────────────────────────────────────────────────────
-export function PumpViewer3D() {
+export function GenericViewer3D() {
   const controlsRef = useRef<OrbitControlsImpl>(null);
+  const selectedMachineId = useMachineStore((s) => s.selectedMachineId);
 
   return (
     <div className="relative h-full w-full bg-[#080d12]">
       <Canvas
         shadows
-        camera={{ fov: 42, near: 0.1, far: 100, position: [3.5, 4.0, 7.5] }}
+        camera={{ fov: 42, near: 0.1, far: 100, position: [5, 5, 10] }}
         gl={{
           antialias:           true,
           toneMapping:         THREE.ACESFilmicToneMapping,
@@ -181,7 +153,7 @@ export function PumpViewer3D() {
         <fog attach="fog" args={["#080d12", 30, 55]} />
 
         <Suspense fallback={null}>
-          <PumpScene controlsRef={controlsRef} />
+          <GenericScene controlsRef={controlsRef} machineId={selectedMachineId} />
         </Suspense>
       </Canvas>
 

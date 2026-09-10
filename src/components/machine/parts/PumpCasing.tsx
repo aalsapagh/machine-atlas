@@ -2,121 +2,128 @@ import { MachinePart } from "../MachinePart";
 import { usePartAppearance } from "../usePartAppearance";
 import type { MachineComponent } from "../../../types/machine";
 
-const HALF_PI = Math.PI / 2;
+const H = Math.PI / 2;
 
+/** Centrifugal pump volute casing with discharge and suction nozzles. */
 export function PumpCasing({ component }: { component: MachineComponent }) {
   const { baseColor, emissiveColor, emissiveIntensity, opacity } =
     usePartAppearance(component);
 
-  const flangeColor  = "#263040";
-  const steelColor   = "#3a5568";
-  const boltColor    = "#5a6878";
-  const coverColor   = "#0e3d70";
-
-  const body = {
-    color:             baseColor,
-    emissive:          emissiveColor,
-    emissiveIntensity: emissiveIntensity,
-    transparent:       true,
+  const paint = {
+    color:              baseColor,
+    emissive:           emissiveColor,
+    emissiveIntensity:  emissiveIntensity,
+    transparent:        true,
     opacity,
-    roughness:         0.38,
-    metalness:         0.58,
+    roughness:          0.36,
+    metalness:          0.30,
+    clearcoat:          0.95,
+    clearcoatRoughness: 0.14,
+  };
+
+  const darkMetal = {
+    color: "#1e2a38", transparent: true, opacity,
+    roughness: 0.55, metalness: 0.65,
+  };
+
+  const boltMat = {
+    color: "#5a6878", transparent: true, opacity,
+    roughness: 0.32, metalness: 0.78,
   };
 
   return (
     <MachinePart component={component}>
-      {/* ── Volute body (wide disc, axis along Z so face points outward) ── */}
-      <mesh rotation={[HALF_PI, 0, 0]} castShadow receiveShadow>
-        <cylinderGeometry args={[0.53, 0.57, 0.58, 40, 1]} />
-        <meshStandardMaterial {...body} />
+      {/* ── Volute main body (disc, axis along Z so flat face faces camera) ── */}
+      <mesh rotation={[H, 0, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.58, 0.62, 0.62, 44, 1]} />
+        <meshPhysicalMaterial {...paint} />
       </mesh>
 
-      {/* ── Volute spiral "tongue" bulge on the discharge side ── */}
-      <mesh position={[0, 0.44, 0]} castShadow>
-        <sphereGeometry args={[0.24, 20, 16, 0, Math.PI * 2, 0, Math.PI * 0.55]} />
-        <meshStandardMaterial {...body} />
+      {/* ── Volute scroll bulge – the expanding chamber on discharge side ── */}
+      {/* Upper bulge: extra material where the volute is widest */}
+      <mesh position={[0, 0.42, 0]} castShadow>
+        <sphereGeometry args={[0.28, 28, 22, 0, Math.PI * 2, 0, Math.PI * 0.55]} />
+        <meshPhysicalMaterial {...paint} />
       </mesh>
 
-      {/* ── Back cover plate (mechanical seal housing side, −Z) ── */}
-      <mesh position={[0, 0, 0.34]} rotation={[HALF_PI, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.42, 0.42, 0.06, 28]} />
-        <meshStandardMaterial color={coverColor} transparent opacity={opacity} roughness={0.46} metalness={0.58} />
-      </mesh>
-      {/* Seal gland flange ring */}
-      <mesh position={[0, 0, 0.36]} rotation={[HALF_PI, 0, 0]}>
-        <torusGeometry args={[0.42, 0.03, 8, 28]} />
-        <meshStandardMaterial color={flangeColor} transparent opacity={opacity} roughness={0.5} metalness={0.5} />
-      </mesh>
-
-      {/* ── Front casing bolt-flange ring ── */}
-      <mesh position={[0, 0, -0.32]} rotation={[HALF_PI, 0, 0]}>
-        <torusGeometry args={[0.58, 0.036, 8, 40]} />
-        <meshStandardMaterial color={flangeColor} transparent opacity={opacity} roughness={0.55} metalness={0.5} />
-      </mesh>
-
-      {/* Casing split bolts (8 around the flange) */}
-      {Array.from({ length: 8 }, (_, i) => {
-        const angle = (i / 8) * Math.PI * 2;
-        const bx = Math.cos(angle) * 0.58;
-        const by = Math.sin(angle) * 0.58;
-        return (
-          <mesh key={i} position={[bx, by, -0.32]}>
-            <cylinderGeometry args={[0.024, 0.024, 0.065, 8]} />
-            <meshStandardMaterial color={boltColor} transparent opacity={opacity} roughness={0.3} metalness={0.75} />
+      {/* ── Bolting split flanges (front & rear) ── */}
+      {[-0.34, 0.34].map((z, i) => (
+        <group key={i}>
+          <mesh position={[0, 0, z]} rotation={[H, 0, 0]}>
+            <torusGeometry args={[0.62, 0.038, 8, 44]} />
+            <meshStandardMaterial {...darkMetal} />
           </mesh>
-        );
-      })}
+          {/* Casing split bolts (8) */}
+          {Array.from({ length: 8 }, (_, b) => {
+            const a  = (b / 8) * Math.PI * 2;
+            const bx = Math.cos(a) * 0.63;
+            const by = Math.sin(a) * 0.63;
+            return (
+              <mesh key={b} position={[bx, by, z]}>
+                <cylinderGeometry args={[0.025, 0.025, 0.06, 8]} />
+                <meshStandardMaterial {...boltMat} />
+              </mesh>
+            );
+          })}
+        </group>
+      ))}
 
-      {/* ── Discharge nozzle (exits upward, tangential off the volute) ── */}
-      <mesh position={[0, 0.76, 0]} castShadow>
-        <cylinderGeometry args={[0.165, 0.185, 0.54, 20]} />
-        <meshStandardMaterial {...body} />
+      {/* ── Back cover plate / mechanical-seal housing ── */}
+      <mesh position={[0, 0, 0.36]} rotation={[H, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.44, 0.44, 0.07, 30]} />
+        <meshPhysicalMaterial color="#0e4078" transparent opacity={opacity} roughness={0.44} metalness={0.28} clearcoat={0.9} clearcoatRoughness={0.18} />
+      </mesh>
+
+      {/* ── Discharge nozzle (upward, offset toward volute tongue) ── */}
+      <mesh position={[0.04, 0.80, 0]} castShadow>
+        <cylinderGeometry args={[0.172, 0.190, 0.58, 22]} />
+        <meshPhysicalMaterial {...paint} />
       </mesh>
       {/* Discharge weld-neck flange */}
-      <mesh position={[0, 1.04, 0]}>
-        <cylinderGeometry args={[0.24, 0.24, 0.045, 24]} />
-        <meshStandardMaterial color={flangeColor} transparent opacity={opacity} roughness={0.5} metalness={0.52} />
+      <mesh position={[0.04, 1.10, 0]}>
+        <cylinderGeometry args={[0.255, 0.255, 0.048, 26]} />
+        <meshStandardMaterial {...darkMetal} />
       </mesh>
-      {/* Discharge flange bolts */}
-      {Array.from({ length: 6 }, (_, i) => {
-        const angle = (i / 6) * Math.PI * 2;
-        const fx = Math.cos(angle) * 0.22;
-        const fz = Math.sin(angle) * 0.22;
+      {/* Discharge flange bolts (6) */}
+      {Array.from({ length: 6 }, (_, b) => {
+        const a  = (b / 6) * Math.PI * 2;
+        const bx = 0.04 + Math.cos(a) * 0.23;
+        const bz = Math.sin(a) * 0.23;
         return (
-          <mesh key={i} position={[fx, 1.045, fz]} rotation={[HALF_PI, 0, 0]}>
-            <cylinderGeometry args={[0.02, 0.02, 0.06, 8]} />
-            <meshStandardMaterial color={boltColor} transparent opacity={opacity} roughness={0.3} metalness={0.75} />
+          <mesh key={b} position={[bx, 1.10, bz]} rotation={[H, 0, 0]}>
+            <cylinderGeometry args={[0.021, 0.021, 0.065, 8]} />
+            <meshStandardMaterial {...boltMat} />
           </mesh>
         );
       })}
 
-      {/* ── Suction nozzle (faces front +Z) ── */}
-      <mesh position={[0, -0.12, 0.6]} rotation={[HALF_PI, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.195, 0.195, 0.38, 20]} />
-        <meshStandardMaterial color={steelColor} transparent opacity={opacity} roughness={0.4} metalness={0.58} />
+      {/* ── Suction nozzle (front face, +Z direction) ── */}
+      <mesh position={[0, -0.11, 0.65]} rotation={[H, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.200, 0.200, 0.40, 22]} />
+        <meshPhysicalMaterial color="#1a5aa0" transparent opacity={opacity} roughness={0.38} metalness={0.28} clearcoat={0.9} clearcoatRoughness={0.16} />
       </mesh>
       {/* Suction flange */}
-      <mesh position={[0, -0.12, 0.81]} rotation={[HALF_PI, 0, 0]}>
-        <cylinderGeometry args={[0.265, 0.265, 0.045, 24]} />
-        <meshStandardMaterial color={flangeColor} transparent opacity={opacity} roughness={0.5} metalness={0.52} />
+      <mesh position={[0, -0.11, 0.865]} rotation={[H, 0, 0]}>
+        <cylinderGeometry args={[0.272, 0.272, 0.048, 26]} />
+        <meshStandardMaterial {...darkMetal} />
       </mesh>
-      {/* Suction flange bolts */}
-      {Array.from({ length: 8 }, (_, i) => {
-        const angle = (i / 8) * Math.PI * 2;
-        const bx = Math.cos(angle) * 0.245;
-        const by = Math.sin(angle) * 0.245;
+      {/* Suction bolts (8) */}
+      {Array.from({ length: 8 }, (_, b) => {
+        const a  = (b / 8) * Math.PI * 2;
+        const bx = Math.cos(a) * 0.250;
+        const by = Math.sin(a) * 0.250 + (-0.11);
         return (
-          <mesh key={i} position={[bx, by + (-0.12), 0.82]}>
-            <cylinderGeometry args={[0.02, 0.02, 0.06, 8]} />
-            <meshStandardMaterial color={boltColor} transparent opacity={opacity} roughness={0.3} metalness={0.75} />
+          <mesh key={b} position={[bx, by, 0.868]}>
+            <cylinderGeometry args={[0.021, 0.021, 0.065, 8]} />
+            <meshStandardMaterial {...boltMat} />
           </mesh>
         );
       })}
 
-      {/* ── Drain plug (bottom of casing) ── */}
-      <mesh position={[0, -0.58, 0]}>
-        <cylinderGeometry args={[0.03, 0.03, 0.06, 10]} />
-        <meshStandardMaterial color={boltColor} transparent opacity={opacity} roughness={0.4} metalness={0.7} />
+      {/* ── Drain plug (bottom) ── */}
+      <mesh position={[0, -0.62, 0]}>
+        <cylinderGeometry args={[0.032, 0.032, 0.06, 10]} />
+        <meshStandardMaterial color="#5a6878" transparent opacity={opacity} roughness={0.4} metalness={0.7} />
       </mesh>
     </MachinePart>
   );

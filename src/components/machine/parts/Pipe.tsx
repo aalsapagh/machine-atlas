@@ -2,72 +2,69 @@ import { MachinePart } from "../MachinePart";
 import { usePartAppearance } from "../usePartAppearance";
 import type { MachineComponent } from "../../../types/machine";
 
-const HALF_PI = Math.PI / 2;
+const H = Math.PI / 2;
 
 export function Pipe({ component }: { component: MachineComponent }) {
   const { baseColor, emissiveColor, emissiveIntensity, opacity } =
     usePartAppearance(component);
 
-  const pipeH      = component.size[1];
-  const flangeColor = "#263040";
-  const boltColor   = "#4a5568";
+  const pipeH  = component.size[1];
+  const pipeMat = {
+    color: baseColor, emissive: emissiveColor, emissiveIntensity,
+    transparent: true, opacity, roughness: 0.42, metalness: 0.55,
+    clearcoat: 0.7, clearcoatRoughness: 0.22,
+  };
+  const darkMetal = { color: "#1e2a38", transparent: true, opacity, roughness: 0.52, metalness: 0.68 };
+  const boltMat   = { color: "#5a6878", transparent: true, opacity, roughness: 0.30, metalness: 0.80 };
 
   return (
     <MachinePart component={component}>
       {/* ── Pipe body ── */}
       <mesh castShadow receiveShadow>
-        <cylinderGeometry args={[0.155, 0.155, pipeH, 22]} />
-        <meshStandardMaterial
-          color={baseColor}
-          emissive={emissiveColor}
-          emissiveIntensity={emissiveIntensity}
-          transparent
-          opacity={opacity}
-          roughness={0.44}
-          metalness={0.58}
-        />
+        <cylinderGeometry args={[0.155, 0.155, pipeH, 24]} />
+        <meshPhysicalMaterial {...pipeMat} />
       </mesh>
 
-      {/* ── Pipe inner bore visible at each end ── */}
-      {[-1, 1].map((side, i) => (
-        <mesh key={i} position={[0, side * (pipeH / 2 - 0.01), 0]}>
-          <cylinderGeometry args={[0.115, 0.115, 0.02, 18]} />
-          <meshStandardMaterial color="#0a0f16" transparent opacity={opacity} roughness={0.9} metalness={0.1} />
+      {/* ── Inner bore at ends ── */}
+      {[-1, 1].map((s, i) => (
+        <mesh key={i} position={[0, s * (pipeH / 2 - 0.012), 0]}>
+          <cylinderGeometry args={[0.115, 0.115, 0.022, 20]} />
+          <meshStandardMaterial color="#080d12" transparent opacity={opacity} roughness={0.95} />
         </mesh>
       ))}
 
-      {/* ── Weld-neck flanges at each end ── */}
-      {[-1, 1].map((side, i) => (
+      {/* ── Weld-neck flanges ── */}
+      {[-1, 1].map((s, i) => (
         <group key={i}>
-          <mesh position={[0, side * (pipeH / 2 - 0.025), 0]}>
-            <cylinderGeometry args={[0.22, 0.22, 0.045, 24]} />
-            <meshStandardMaterial color={flangeColor} transparent opacity={opacity} roughness={0.5} metalness={0.55} />
+          <mesh position={[0, s * (pipeH / 2 - 0.026), 0]}>
+            <cylinderGeometry args={[0.225, 0.225, 0.048, 26]} />
+            <meshStandardMaterial {...darkMetal} />
           </mesh>
-          {/* Flange face ring */}
-          <mesh position={[0, side * (pipeH / 2 - 0.005), 0]}>
-            <torusGeometry args={[0.18, 0.012, 6, 24]} />
-            <meshStandardMaterial color="#1a2030" transparent opacity={opacity} roughness={0.5} />
+          {/* Face ring */}
+          <mesh position={[0, s * (pipeH / 2 - 0.006), 0]}>
+            <torusGeometry args={[0.185, 0.012, 6, 26]} />
+            <meshStandardMaterial color="#141c28" transparent opacity={opacity} roughness={0.5} />
           </mesh>
           {/* 6 flange bolts */}
           {Array.from({ length: 6 }, (_, b) => {
-            const angle = (b / 6) * Math.PI * 2;
-            const bx = Math.cos(angle) * 0.2;
-            const bz = Math.sin(angle) * 0.2;
+            const a = (b / 6) * Math.PI * 2;
+            const bx = Math.cos(a) * 0.202;
+            const bz = Math.sin(a) * 0.202;
             return (
-              <mesh key={b} position={[bx, side * (pipeH / 2 - 0.025), bz]} rotation={[HALF_PI, 0, 0]}>
-                <cylinderGeometry args={[0.018, 0.018, 0.06, 8]} />
-                <meshStandardMaterial color={boltColor} transparent opacity={opacity} roughness={0.35} metalness={0.75} />
+              <mesh key={b} position={[bx, s * (pipeH / 2 - 0.026), bz]} rotation={[H, 0, 0]}>
+                <cylinderGeometry args={[0.018, 0.018, 0.062, 8]} />
+                <meshStandardMaterial {...boltMat} />
               </mesh>
             );
           })}
         </group>
       ))}
 
-      {/* ── Check valve body stub (discharge pipe only – heuristic on height) ── */}
+      {/* ── Check valve body (discharge pipe only, taller pipe heuristic) ── */}
       {pipeH > 1.0 && (
-        <mesh position={[0, 0.25, 0]} castShadow>
-          <boxGeometry args={[0.32, 0.28, 0.32]} />
-          <meshStandardMaterial color="#3a5060" transparent opacity={opacity} roughness={0.55} metalness={0.5} />
+        <mesh position={[0, 0.28, 0]} castShadow>
+          <boxGeometry args={[0.33, 0.30, 0.33]} />
+          <meshPhysicalMaterial color="#3a5060" transparent opacity={opacity} roughness={0.52} metalness={0.5} clearcoat={0.6} clearcoatRoughness={0.28} />
         </mesh>
       )}
     </MachinePart>

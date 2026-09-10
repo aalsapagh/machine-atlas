@@ -2,80 +2,59 @@ import { MachinePart } from "../MachinePart";
 import { usePartAppearance } from "../usePartAppearance";
 import type { MachineComponent } from "../../../types/machine";
 
-const HALF_PI = Math.PI / 2;
+const H = Math.PI / 2;
 
 export function Impeller({ component }: { component: MachineComponent }) {
   const { emissiveColor, emissiveIntensity, opacity, healthColor } =
     usePartAppearance(component);
 
-  const vaneCount   = 6;
-  const diskColor   = "#8a9aaa";  // cast stainless / bronze look
-  const vaneColor   = "#6a7a8a";
-  const hubColor    = "#b0b6bc";
+  const disk = {
+    color: "#8a9aaa", emissive: emissiveColor, emissiveIntensity,
+    transparent: true, opacity, roughness: 0.28, metalness: 0.78,
+    clearcoat: 0.5, clearcoatRoughness: 0.25,
+  };
 
   return (
     <MachinePart component={component}>
-      {/* ── Rear shroud disk ── */}
-      <mesh rotation={[HALF_PI, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.38, 0.38, 0.05, 28]} />
-        <meshStandardMaterial
-          color={diskColor}
-          emissive={emissiveColor}
-          emissiveIntensity={emissiveIntensity}
-          transparent
-          opacity={opacity}
-          roughness={0.3}
-          metalness={0.72}
-        />
+      {/* ── Rear shroud ── */}
+      <mesh rotation={[H, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.39, 0.39, 0.052, 30]} />
+        <meshPhysicalMaterial {...disk} />
       </mesh>
 
-      {/* ── Front shroud disk (slightly smaller) ── */}
-      <mesh position={[0, 0.1, 0]} rotation={[HALF_PI, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.34, 0.34, 0.04, 28]} />
-        <meshStandardMaterial color={diskColor} transparent opacity={opacity} roughness={0.3} metalness={0.72} />
+      {/* ── Front shroud (slightly smaller) ── */}
+      <mesh position={[0, 0.1, 0]} rotation={[H, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.35, 0.35, 0.042, 30]} />
+        <meshPhysicalMaterial {...disk} />
       </mesh>
 
-      {/* ── Curved vanes (6 backward-curved blades) ── */}
-      {Array.from({ length: vaneCount }, (_, i) => {
-        const angle  = (i / vaneCount) * Math.PI * 2;
-        const rx = Math.cos(angle) * 0.22;
-        const rz = Math.sin(angle) * 0.22;
-        const tilt   = angle + Math.PI * 0.22;  // backward sweep
+      {/* ── 6 backward-curved vanes ── */}
+      {Array.from({ length: 6 }, (_, i) => {
+        const a = (i / 6) * Math.PI * 2;
         return (
-          <mesh
-            key={i}
-            position={[rx, 0.05, rz]}
-            rotation={[0, tilt, 0]}
-            castShadow
-          >
-            <boxGeometry args={[0.2, 0.1, 0.025]} />
-            <meshStandardMaterial color={vaneColor} transparent opacity={opacity} roughness={0.38} metalness={0.65} />
+          <mesh key={i} position={[Math.cos(a) * 0.22, 0.05, Math.sin(a) * 0.22]} rotation={[0, a + 0.65, 0]} castShadow>
+            <boxGeometry args={[0.22, 0.095, 0.026]} />
+            <meshPhysicalMaterial color="#6a7a8a" transparent opacity={opacity} roughness={0.36} metalness={0.72} clearcoat={0.4} clearcoatRoughness={0.3} />
           </mesh>
         );
       })}
 
-      {/* ── Central hub / boss ── */}
-      <mesh rotation={[HALF_PI, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.085, 0.085, 0.18, 16]} />
-        <meshStandardMaterial color={hubColor} transparent opacity={opacity} roughness={0.25} metalness={0.85} />
+      {/* ── Hub / boss ── */}
+      <mesh rotation={[H, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.088, 0.088, 0.2, 16]} />
+        <meshStandardMaterial color="#b0b8c0" transparent opacity={opacity} roughness={0.22} metalness={0.9} />
       </mesh>
 
-      {/* ── Impeller eye (suction inlet ring) ── */}
-      <mesh position={[0, -0.03, 0]} rotation={[HALF_PI, 0, 0]}>
-        <torusGeometry args={[0.22, 0.018, 8, 28]} />
-        <meshStandardMaterial color={diskColor} transparent opacity={opacity} roughness={0.35} metalness={0.68} />
+      {/* ── Suction eye ring ── */}
+      <mesh position={[0, -0.028, 0]} rotation={[H, 0, 0]}>
+        <torusGeometry args={[0.23, 0.018, 8, 30]} />
+        <meshPhysicalMaterial {...disk} />
       </mesh>
 
-      {/* ── Status indicator (warning on cavitation) ── */}
-      <mesh position={[0.32, 0.14, 0.05]}>
-        <sphereGeometry args={[0.03, 10, 10]} />
-        <meshStandardMaterial
-          color={healthColor}
-          emissive={healthColor}
-          emissiveIntensity={0.85}
-          transparent
-          opacity={opacity}
-        />
+      {/* ── Status indicator ── */}
+      <mesh position={[0.33, 0.14, 0.06]}>
+        <sphereGeometry args={[0.028, 10, 10]} />
+        <meshStandardMaterial color={healthColor} emissive={healthColor} emissiveIntensity={1.0} transparent opacity={opacity} />
       </mesh>
     </MachinePart>
   );
